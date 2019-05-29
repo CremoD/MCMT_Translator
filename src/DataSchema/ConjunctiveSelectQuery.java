@@ -43,6 +43,7 @@ public class ConjunctiveSelectQuery {
 	public void addBinaryCondition(boolean equal, Object first, Object second) {
 		String cond = "(= " + first + " " + second + ")";
 			
+		// cambiamento
 		// control if one of the two objects is an attribute. In that case, extract the db column
 		if (first instanceof Attribute) 
 			first = ((Attribute) first).getDbColumn();
