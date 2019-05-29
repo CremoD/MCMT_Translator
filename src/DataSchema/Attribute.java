@@ -72,4 +72,16 @@ public class Attribute {
 		
 		return result;
 	}
+	
+	public String toString(boolean is_eevar) {
+		String result = "";
+		
+		if (this.getFunction_name().equals("") || (this.getIn_relation() instanceof RepositoryRelation) || is_eevar)
+			result += this.name;
+		else {
+			result += "(" + this.function_name + " "+ ((CatalogRelation)this.getIn_relation()).getPrimary_key().getName() + ")";
+		}
+		
+		return result;
+	}
 }

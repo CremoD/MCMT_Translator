@@ -11,14 +11,15 @@ public class ConjunctiveSelectQuery {
 	
 	private SelectQuery select_query;
 	private HashMap<String, DbTable> tables;
-	String mcmt = "";
-	private HashMap<String, Sort> eevar;
+	private String mcmt = "";
+	private HashMap<String, Sort> eevar_list;
+	private boolean index_present = false;
 
 	// constructor
 	public ConjunctiveSelectQuery(Attribute...attributes) {
 		this.tables = new HashMap<String, DbTable>();
 		this.select_query = new SelectQuery();
-		this.eevar = new HashMap<String, Sort>();
+		this.eevar_list = new HashMap<String, Sort>();
 		
 		for(Attribute att : attributes) {
 			this.select_query.addColumns(att.getDbColumn());
@@ -29,26 +30,41 @@ public class ConjunctiveSelectQuery {
 				this.tables.put(att.getDbColumn().getTable().getAlias(), att.getDbColumn().getTable());
 			}
 			
-//			// add the method if a column in select clause is not primary key: can be useful
-//			if (!att.getFunction_name().equals("") && (att.getIn_relation() instanceof CatalogRelation)) {
-//				mcmt += "(= (" + att.getFunction_name() + " "
-//						+ ((CatalogRelation) att.getIn_relation()).getPrimary_key().getName() + ") " + att.getName()
-//						+ ") ";
-//			}
+			// add the method if a column in select clause is not primary key: can be useful
+			if (!att.getFunction_name().equals("") && (att.getIn_relation() instanceof CatalogRelation)) {
+				mcmt += "(= (" + att.getFunction_name() + " "
+						+ ((CatalogRelation) att.getIn_relation()).getPrimary_key().getName() + ") " + att.getName()
+						+ ") ";
+				eevar_list.put(att.getName(), att.getSort());
+				
+			}
 			
 		}
 	}
 	
 	// add condition method
 	public void addBinaryCondition(boolean equal, Object first, Object second) {
-		String cond = "(= " + first + " " + second + ")";
+		
+		String first_mcmt = first + "";
+		String second_mcmt = second + "";
 			
-		// cambiamento
 		// control if one of the two objects is an attribute. In that case, extract the db column
-		if (first instanceof Attribute) 
-			first = ((Attribute) first).getDbColumn();
-		if (second instanceof Attribute) 
+		if (first instanceof Attribute) { 
+			Attribute first_att = (Attribute) first;
+			first = first_att.getDbColumn();
+			if (eevar_list.containsKey(first_att.getName())) 
+				first_mcmt = "" + first_att.toString(true);
+			
+		}
+		if (second instanceof Attribute) {
+			Attribute second_att = (Attribute) second;
 			second = ((Attribute) second).getDbColumn();
+			if (eevar_list.containsKey(second_att.getName())) 
+				second_mcmt = "" + second_att.toString(true);
+		}
+		
+		String cond = "(= " + first_mcmt + " " + second_mcmt + ")";
+		
 
 		if(equal) {
 			select_query.addCondition(BinaryCondition.equalTo(first, second));
@@ -79,8 +95,8 @@ public class ConjunctiveSelectQuery {
 			this.select_query.addFromTable(table);
 
 			mcmt += "(not (= " + rel.getPrimary_key().getName() + " null)) ";
-			if(!eevar.containsKey(rel.getPrimary_key().getName())) {
-				eevar.put(rel.getPrimary_key().getName(), rel.getPrimary_key().getSort());
+			if(!eevar_list.containsKey(rel.getPrimary_key().getName())) {
+				eevar_list.put(rel.getPrimary_key().getName(), rel.getPrimary_key().getSort());
 			}
 		}
 
@@ -96,8 +112,9 @@ public class ConjunctiveSelectQuery {
 			
 			for (int i = 0; i < rel.getAttributes().size(); i++) {
 				mcmt += "(= " + rel.getName() + (i + 1) + "[x] " + rel.getAttribute(i).getName() + ") ";
-				if(!eevar.containsKey(rel.getAttribute(i).getName())) {
-					eevar.put(rel.getAttribute(i).getName(), rel.getAttribute(i).getSort());
+				this.setIndex_present(true);
+				if(!eevar_list.containsKey(rel.getAttribute(i).getName())) {
+					eevar_list.put(rel.getAttribute(i).getName(), rel.getAttribute(i).getSort());
 				}
 			}
 		}
@@ -133,18 +150,29 @@ public class ConjunctiveSelectQuery {
 		return this.mcmt;
 	}
 	
-	public HashMap<String, Sort> getEevar() {
-		return eevar;
+	public HashMap<String, Sort> getEevar_List() {
+		return eevar_list;
 	}
 
-	public void setEevar(HashMap<String, Sort> eevar) {
-		this.eevar = eevar;
+	public void setEevar_List(HashMap<String, Sort> eevar) {
+		this.eevar_list = eevar;
 	}
+	
+	public boolean isIndex_present() {
+		return index_present;
+	}
+
+	public void setIndex_present(boolean index_present) {
+		this.index_present = index_present;
+	}
+
+	
+	
 	
 	public String printEevar() {
 		String result = "";
 		
-		 for (Map.Entry<String, Sort> entry : eevar.entrySet()) {
+		 for (Map.Entry<String, Sort> entry : eevar_list.entrySet()) {
 	         result += ":eevar " + entry.getKey() + " " + entry.getValue().getName() + "\n";
 	        }
 		 

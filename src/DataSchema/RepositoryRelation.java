@@ -63,6 +63,11 @@ public class RepositoryRelation implements Relation{
 		this.relationTable = relationTable;
 	}
 	
+	// method that returns the arity of the relation
+	public int arity() {
+		return this.attributes.size();
+	}
+	
 	// toString method in order to print the corresponding MCMT declaration
 	@Override
 	public String toString() {
