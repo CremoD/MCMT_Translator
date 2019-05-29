@@ -7,6 +7,8 @@ public class InsertTransition {
 	private ConjunctiveSelectQuery precondition;
 	private HashMap<String, Sort> eevar_list;
 	private String guard;
+	private String local_update = "";
+	private String local_static = "";
 	
 	public InsertTransition(ConjunctiveSelectQuery precondition) {
 		this.precondition = precondition;
@@ -21,23 +23,38 @@ public class InsertTransition {
 			return;
 		}
 		
-		for (int i = 0; i < r.arity(); i++) {
-			// case in which inserted attribute is not in the eevar
-			if (!eevar_list.containsKey(variables[i])) {
-				System.out.println("Errorrrrrr");
-				return;
+		// update part
+		for (RepositoryRelation rep : RelationFactory.repository.values()) {
+			if (rep.equals(r)) {
+				for (int i = 0; i < r.arity(); i++) {
+					// case in which inserted attribute is not in the eevar
+					if (!eevar_list.containsKey(variables[i])) {
+						System.out.println("Errorrrrrr");
+						return;
+					}
+					// control of the sorts to see if they match
+					if (!r.getAttribute(i).getSort().getName().equals(eevar_list.get(variables[i]).getName())) {
+						System.out.println("No matching between sorts");
+						return;
+					}
+					
+					if (!precondition.isIndex_present())
+						guard += " (= " + r.getName() + (i+1)+ "[x] null)";
+					else 
+						guard += " (= " + r.getName() + (i+1)+ "[y] null)";
+					
+					local_update += ":val " + variables[i] + "\n";
+					local_static += ":val " + rep.getName() + (i+1) + "[j]\n";
+				}
 			}
-			// control of the sorts to see if they match
-			if (!r.getAttribute(i).getSort().getName().equals(eevar_list.get(variables[i]).getName())) {
-				System.out.println("No matching between sorts");
-				return;
+			else {
+				for (int i = 0; i < rep.arity(); i++) {
+					local_update += ":val " + rep.getName() + (i+1) + "[j]\n";
+					local_static += ":val " + rep.getName() + (i+1) + "[j]\n";
+				}
 			}
-			
-			if (!precondition.isIndex_present())
-				guard += " (= " + r.getName() + (i+1)+ "[x] null)";
-			else 
-				guard += " (= " + r.getName() + (i+1)+ "[y] null)";
-		}	
+		}
+		
 	}
 
 	
@@ -64,6 +81,32 @@ public class InsertTransition {
 
 	public void setGuard(String guard) {
 		this.guard = guard;
+	}
+	public String getLocal_update() {
+		return local_update;
+	}
+
+	public void setLocal_update(String local_update) {
+		this.local_update = local_update;
+	}
+
+	// method to print the complete insert transition
+	public String generateMCMT() {
+		String final_mcmt = ":transition\n:var j\n:var x\n"; // to do, check for y
+		final_mcmt +=":guard " + this.guard + "\n";
+		final_mcmt += ":numcases 2\n:case (= j x)\n";
+		final_mcmt += this.local_update + "\n";
+		final_mcmt += ":case\n";
+		final_mcmt += local_static;
+		
+		
+		
+		
+		
+		
+		
+		
+		return final_mcmt;
 	}
 
 }

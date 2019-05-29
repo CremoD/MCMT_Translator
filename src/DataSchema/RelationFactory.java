@@ -8,8 +8,8 @@ import com.healthmarketscience.sqlbuilder.dbspec.basic.DbSpec;
 public class RelationFactory {
 	// create an object of Relation Factory (singleton pattern)
 	private static RelationFactory relation_factory = new RelationFactory ();
-	private static HashMap<String, CatalogRelation> catalog = new HashMap<String, CatalogRelation>();
-	private static HashMap<String, RepositoryRelation> repository = new HashMap<String, RepositoryRelation>();
+	public static HashMap<String, CatalogRelation> catalog = new HashMap<String, CatalogRelation>();
+	public static HashMap<String, RepositoryRelation> repository = new HashMap<String, RepositoryRelation>();
 	private static DbSpec spec;
 	public static DbSchema schema;
 	

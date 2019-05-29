@@ -82,7 +82,7 @@ public class test {
 		InsertTransition it = new InsertTransition(prova);
 		it.insert(s, "a1_s", "a2_s");
 		
-		System.out.println(it.getGuard());
+		System.out.println(it.generateMCMT());
 		
 //		////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //		//											Union Conjunctive Query											//
