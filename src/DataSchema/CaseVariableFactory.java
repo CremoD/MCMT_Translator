@@ -6,7 +6,7 @@ public class CaseVariableFactory {
 
 	// create an object of Relation Factory (singleton pattern)
 	private static CaseVariableFactory cv_factory = new CaseVariableFactory ();
-	private static HashMap<String, CaseVariable> casevariable_list = new HashMap<String, CaseVariable>();
+	public static HashMap<String, CaseVariable> casevariable_list = new HashMap<String, CaseVariable>();
 		
 		// make the constructor private so that this class cannot be instantiated
 		private CaseVariableFactory() {}

@@ -20,6 +20,7 @@ public class test {
 		Sort string_sort = sort_factory.getSort("String_sort");
 		
 		CaseVariable c = cv_factory.getCaseVariable("winner", r2_sort, true);
+		CaseVariable c2 = cv_factory.getCaseVariable("looser", string_sort, true);
 
 		
 		
@@ -62,13 +63,12 @@ public class test {
 		//CatalogRelation aliasr1 = r1.getAlias();
 
 		// create conjunctive query with list of columns of the select part
-		ConjunctiveSelectQuery prova = new ConjunctiveSelectQuery(r1.getAttribute(0), r2.getAttribute(1), s.getAttribute(0));
+		ConjunctiveSelectQuery prova = new ConjunctiveSelectQuery(r1.getAttribute(0), r2.getAttribute(1));
 		// add FROM part
 		prova.addFrom(r1);
 		// add WHERE part
 		prova.addBinaryCondition(true, r1.getAttribute(1), c);
-		prova.addBinaryCondition(true, s.getAttribute(0), r2.getAttribute(1));
-
+		prova.addBinaryCondition(true, r2.getAttribute(1), r1.getAttribute(3));
 		
 
 
@@ -79,10 +79,13 @@ public class test {
 		System.out.println(prova.getMCMT());
 		
 		
-		InsertTransition it = new InsertTransition(prova);
-		it.insert(s, "a1_s", "a2_s");
-		
+		InsertTransition it = new InsertTransition("Transition1", prova);
+		it.insert(s, "id_r1", "a1_r2");
+		it.set(c, "winner2");
+		it.set(c2, "looser2");
+		System.out.println();
 		System.out.println(it.generateMCMT());
+		
 		
 //		////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //		//											Union Conjunctive Query											//
