@@ -1,7 +1,6 @@
 package DataSchema;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import com.healthmarketscience.sqlbuilder.BinaryCondition;
 import com.healthmarketscience.sqlbuilder.SelectQuery;
@@ -165,23 +164,5 @@ public class ConjunctiveSelectQuery {
 	public void setIndex_present(boolean index_present) {
 		this.index_present = index_present;
 	}
-
-	
-	
-	
-	public String printEevar() {
-		String result = "";
-		
-		 for (Map.Entry<String, Sort> entry : eevar_list.entrySet()) {
-	         result += ":eevar " + entry.getKey() + " " + entry.getValue().getName() + "\n";
-	        }
-		 
-		return result;
-	}
-	
-	
-	
-	
-	
 
 }

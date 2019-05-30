@@ -1,6 +1,7 @@
 package DataSchema;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class InsertTransition {
 	
@@ -150,6 +151,16 @@ public class InsertTransition {
 		return final_mcmt;
 	}
 	
+	// print eevar
+	public String printEevar() {
+		String result = "";
+		
+		 for (Map.Entry<String, Sort> entry : eevar_list.entrySet()) {
+	         result += ":eevar " + entry.getKey() + " " + entry.getValue().getName() + "\n";
+	        }
+		 
+		return result;
+	}
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// getters and setters

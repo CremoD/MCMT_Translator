@@ -37,6 +37,10 @@ public class test {
 		RepositoryRelation s = relation_factory.getRepositoryRelation("S");
 		s.addAttribute("a1_s", r1_sort);
 		s.addAttribute("a2_s", string_sort);
+		
+		RepositoryRelation z = relation_factory.getRepositoryRelation("Z");
+		z.addAttribute("a1_z", r1_sort);
+		z.addAttribute("a2_z", string_sort);
 
 		printDeclaration(relation_factory, sort_factory, cv_factory);
 
@@ -72,7 +76,6 @@ public class test {
 		
 
 
-		System.out.println(prova.printEevar());
 
 		System.out.println(prova.getQueryString());
 		System.out.println();
@@ -83,6 +86,9 @@ public class test {
 		it.insert(s, "id_r1", "a1_r2");
 		it.set(c, "winner2");
 		it.set(c2, "looser2");
+		
+		System.out.println(it.printEevar());
+
 		System.out.println();
 		System.out.println(it.generateMCMT());
 		
