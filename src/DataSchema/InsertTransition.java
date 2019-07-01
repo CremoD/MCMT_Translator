@@ -1,12 +1,11 @@
 package DataSchema;
 
 import java.util.HashMap;
-import java.util.Map;
 
 public class InsertTransition {
 	
 	private ConjunctiveSelectQuery precondition;
-	private HashMap<String, Sort> eevar_list;
+	private HashMap<String, String> eevar_association;
 	private HashMap<CaseVariable, String> set_table; 
 	private String name;
 	private String guard;
@@ -15,7 +14,7 @@ public class InsertTransition {
 	
 	public InsertTransition(String name, ConjunctiveSelectQuery precondition) {
 		this.precondition = precondition;
-		this.eevar_list = precondition.getEevar_List();
+		this.eevar_association = precondition.getRef_manager();
 		this.guard = precondition.getMCMT();
 		this.set_table = new HashMap<CaseVariable, String>();
 		this.name = name;
@@ -34,12 +33,12 @@ public class InsertTransition {
 			if (rep.equals(r)) {
 				for (int i = 0; i < r.arity(); i++) {
 					// case in which inserted attribute is not in the eevar
-					if (!eevar_list.containsKey(variables[i])) {
+					if (!eevar_association.containsKey(variables[i])) {
 						System.out.println("Inserted attribute is not an answer of the precondition");
 						return;
 					}
 					// control of the sorts to see if they match
-					if (!r.getAttribute(i).getSort().getName().equals(eevar_list.get(variables[i]).getName())) {
+					if (!r.getAttribute(i).getSort().getName().equals(EevarManager.getSortByVariable(eevar_association.get(variables[i])).getName())) {
 						System.out.println("No matching between sorts");
 						return;
 					}
@@ -49,7 +48,7 @@ public class InsertTransition {
 					else 
 						guard += "(= " + r.getName() + (i+1)+ "[y] null) ";
 					
-					local_update += ":val " + variables[i] + "\n";
+					local_update += ":val " + eevar_association.get(variables[i]) + "\n";
 					local_static += ":val " + rep.getName() + (i+1) + "[j]\n";
 				}
 			}
@@ -73,7 +72,7 @@ public class InsertTransition {
 			return;
 		}
 		
-		set_table.put(cv, new_value);
+		set_table.put(cv, eevar_association.get(new_value));
 	}
 	
 	// generate global updates
@@ -151,16 +150,6 @@ public class InsertTransition {
 		return final_mcmt;
 	}
 	
-	// print eevar
-	public String printEevar() {
-		String result = "";
-		
-		 for (Map.Entry<String, Sort> entry : eevar_list.entrySet()) {
-	         result += ":eevar " + entry.getKey() + " " + entry.getValue().getName() + "\n";
-	        }
-		 
-		return result;
-	}
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// getters and setters
@@ -170,11 +159,11 @@ public class InsertTransition {
 	public void setPrecondition(ConjunctiveSelectQuery precondition) {
 		this.precondition = precondition;
 	}
-	public HashMap<String, Sort> getEevar_List() {
-		return eevar_list;
+	public HashMap<String, String> getEevar_List() {
+		return eevar_association;
 	}
-	public void setEevar_list(HashMap<String, Sort> eevar) {
-		this.eevar_list = eevar;
+	public void setEevar_list(HashMap<String, String> eevar) {
+		this.eevar_association = eevar;
 	}
 	public String getGuard() {
 		return guard;

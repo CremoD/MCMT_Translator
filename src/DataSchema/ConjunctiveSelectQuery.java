@@ -1,5 +1,6 @@
 package DataSchema;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 import com.healthmarketscience.sqlbuilder.BinaryCondition;
@@ -11,14 +12,14 @@ public class ConjunctiveSelectQuery {
 	private SelectQuery select_query;
 	private HashMap<String, DbTable> tables;
 	private String mcmt = "";
-	private HashMap<String, Sort> eevar_list;
+	private HashMap<String, String> ref_manager; // key is internal name, value is global eevar
 	private boolean index_present = false;
 
 	// constructor
 	public ConjunctiveSelectQuery(Attribute...attributes) {
 		this.tables = new HashMap<String, DbTable>();
 		this.select_query = new SelectQuery();
-		this.eevar_list = new HashMap<String, Sort>();
+		this.ref_manager = new HashMap<String, String>();
 		
 		for(Attribute att : attributes) {
 			this.select_query.addColumns(att.getDbColumn());
@@ -29,12 +30,12 @@ public class ConjunctiveSelectQuery {
 				this.tables.put(att.getDbColumn().getTable().getAlias(), att.getDbColumn().getTable());
 			}
 			
-			// add the method if a column in select clause is not primary key: can be useful
+			// add the method if a column in select clause is not primary key
 			if (!att.getFunction_name().equals("") && (att.getIn_relation() instanceof CatalogRelation)) {
+				this.addReferenceVariable(att);
 				mcmt += "(= (" + att.getFunction_name() + " "
-						+ ((CatalogRelation) att.getIn_relation()).getPrimary_key().getName() + ") " + att.getName()
+						+ this.ref_manager.get(((CatalogRelation) att.getIn_relation()).getPrimary_key().getName()) + ") " + this.ref_manager.get(att.getName())
 						+ ") ";
-				eevar_list.put(att.getName(), att.getSort());
 				
 			}
 			
@@ -51,15 +52,21 @@ public class ConjunctiveSelectQuery {
 		if (first instanceof Attribute) { 
 			Attribute first_att = (Attribute) first;
 			first = first_att.getDbColumn();
-			if (eevar_list.containsKey(first_att.getName())) 
-				first_mcmt = "" + first_att.toString(true);
+			
+			// prova
+			if(ref_manager.containsKey(first_att.getName()))
+				first_mcmt = "" + ref_manager.get(first_att.getName());
+			else 
+				first_mcmt = "" + first_att.toString(ref_manager.get(((CatalogRelation)first_att.getIn_relation()).getPrimary_key().getName()));
 			
 		}
 		if (second instanceof Attribute) {
 			Attribute second_att = (Attribute) second;
 			second = ((Attribute) second).getDbColumn();
-			if (eevar_list.containsKey(second_att.getName())) 
-				second_mcmt = "" + second_att.toString(true);
+			if(ref_manager.containsKey(second_att.getName()))
+				second_mcmt = "" + ref_manager.get(second_att.getName());
+			else 
+				second_mcmt = "" + second_att.toString(ref_manager.get(((CatalogRelation)second_att.getIn_relation()).getPrimary_key().getName()));
 		}
 		
 		String cond = "(= " + first_mcmt + " " + second_mcmt + ")";
@@ -93,10 +100,10 @@ public class ConjunctiveSelectQuery {
 			this.tables.put(table.getAlias(), table);
 			this.select_query.addFromTable(table);
 
-			mcmt += "(not (= " + rel.getPrimary_key().getName() + " null)) ";
-			if(!eevar_list.containsKey(rel.getPrimary_key().getName())) {
-				eevar_list.put(rel.getPrimary_key().getName(), rel.getPrimary_key().getSort());
-			}
+			// prova
+			this.addReferenceVariable(rel.getPrimary_key());
+			
+			mcmt += "(not (= " + this.ref_manager.get(rel.getPrimary_key().getName()) + " null)) ";
 		}
 
 	}
@@ -110,11 +117,10 @@ public class ConjunctiveSelectQuery {
 			this.select_query.addFromTable(table);
 			
 			for (int i = 0; i < rel.getAttributes().size(); i++) {
-				mcmt += "(= " + rel.getName() + (i + 1) + "[x] " + rel.getAttribute(i).getName() + ") ";
+				this.addReferenceVariable(rel.getAttribute(i));
+				
+				mcmt += "(= " + rel.getName() + (i + 1) + "[x] " + this.ref_manager.get(rel.getAttribute(i).getName()) + ") ";
 				this.setIndex_present(true);
-				if(!eevar_list.containsKey(rel.getAttribute(i).getName())) {
-					eevar_list.put(rel.getAttribute(i).getName(), rel.getAttribute(i).getSort());
-				}
 			}
 		}
 	}
@@ -149,14 +155,6 @@ public class ConjunctiveSelectQuery {
 		return this.mcmt;
 	}
 	
-	public HashMap<String, Sort> getEevar_List() {
-		return eevar_list;
-	}
-
-	public void setEevar_List(HashMap<String, Sort> eevar) {
-		this.eevar_list = eevar;
-	}
-	
 	public boolean isIndex_present() {
 		return index_present;
 	}
@@ -164,5 +162,46 @@ public class ConjunctiveSelectQuery {
 	public void setIndex_present(boolean index_present) {
 		this.index_present = index_present;
 	}
+	public HashMap<String, String> getRef_manager() {
+		return ref_manager;
+	}
+	public void setRef_manager(HashMap<String, String> ref_manager) {
+		this.ref_manager = ref_manager;
+	}
+
+	
+	// method that performs eevar association
+	public void addReferenceVariable(Attribute att) {
+		// 1 ) check in the reference manager
+		if (this.ref_manager.containsKey(att.getName()))
+			return;
+		
+		// 2 ) check if in the global manager there are eevar with that sort
+		Collection<String> eevar_available = EevarManager.getEevarWithSort(att.getSort());
+		
+		if(eevar_available.isEmpty()) {
+			// add eevar to the global eevar manager
+			String global_reference = EevarManager.addEevar(att.getSort());
+			// add association locally
+			this.ref_manager.put(att.getName(), global_reference);
+		}
+		// 3 process the array and look if one is free (it means it is not in the local map)
+		else {
+			for (String glb_name : eevar_available) {
+				// case in which current one is not already used, I can use it
+				if (!this.ref_manager.containsValue(glb_name)) {
+					this.ref_manager.put(att.getName(), glb_name);
+					return;
+				}
+			}
+			// case in which all eevar already used
+			String global_reference = EevarManager.addEevar(att.getSort());
+			this.ref_manager.put(att.getName(), global_reference);
+
+		}
+		
+	}
+	
+	
 
 }

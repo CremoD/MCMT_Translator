@@ -73,13 +73,13 @@ public class Attribute {
 		return result;
 	}
 	
-	public String toString(boolean is_eevar) {
+	public String toString(String eevar) {
 		String result = "";
 		
-		if (this.getFunction_name().equals("") || (this.getIn_relation() instanceof RepositoryRelation) || is_eevar)
+		if (this.getFunction_name().equals("") || (this.getIn_relation() instanceof RepositoryRelation))
 			result += this.name;
 		else {
-			result += "(" + this.function_name + " "+ ((CatalogRelation)this.getIn_relation()).getPrimary_key().getName() + ")";
+			result += "(" + this.function_name + " "+ eevar + ")";
 		}
 		
 		return result;

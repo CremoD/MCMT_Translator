@@ -43,21 +43,6 @@ public class test {
 		z.addAttribute("a2_z", string_sort);
 
 		printDeclaration(relation_factory, sort_factory, cv_factory);
-
-
-		
-		/*// try queries on tables
-		// creation
-		String createR1Table = new CreateTableQuery(r1.getDbTable(), true).validate().toString();
-		System.out.println(createR1Table);
-		// insertion
-		String insertR1Query = new InsertQuery(r1.getDbTable()).addColumn(r1.getAttributes().get(0).getDbColumn(), 1)
-				.addColumn(r1.getAttributes().get(1).getDbColumn(), "bob").validate().toString();
-		System.out.println(insertR1Query);
-		// selection
-		String query1 = new SelectQuery().addColumns(r1.getAttributes().get(0).getDbColumn()).addCondition(BinaryCondition.equalTo(r1.getAttributes().get(0).getDbColumn(), 1))
-				.validate().toString();
-		System.out.println(query1.toString());*/
 		
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//											Conjunctive Query												//
@@ -71,7 +56,7 @@ public class test {
 		// add FROM part
 		prova.addFrom(r1);
 		// add WHERE part
-		prova.addBinaryCondition(true, r1.getAttribute(1), c);
+		prova.addBinaryCondition(true, r1.getAttribute(0), c);
 		prova.addBinaryCondition(true, r2.getAttribute(1), r1.getAttribute(3));
 		
 
@@ -81,16 +66,42 @@ public class test {
 		System.out.println();
 		System.out.println(prova.getMCMT());
 		
+		System.out.println();
+		System.out.println(EevarManager.printEevar());
+		
+		
+//		// create conjunctive query with list of columns of the select part
+//		ConjunctiveSelectQuery prova2 = new ConjunctiveSelectQuery(r2.getAttribute(1));
+//		// add FROM part
+//		prova2.addFrom(s);
+//		// add WHERE part
+//		prova2.addBinaryCondition(true, s.getAttribute(0), c);
+//		prova2.addBinaryCondition(true, r2.getAttribute(1), c2);
+//		
+//		System.out.println();
+//		System.out.println(prova2.getQueryString());
+//		System.out.println();
+//		System.out.println(prova2.getMCMT());
+		
+		
+		
 		
 		InsertTransition it = new InsertTransition("Transition1", prova);
 		it.insert(s, "id_r1", "a1_r2");
-		it.set(c, "winner2");
-		it.set(c2, "looser2");
+		it.set(c, "id_r2");
+		//it.set(c2, "looser2");
 		
-		System.out.println(it.printEevar());
 
 		System.out.println();
 		System.out.println(it.generateMCMT());
+		
+		
+		
+		// to do
+		// reference variables and reference relations
+		// change name to InsertSet
+		// eevar system
+		// builder pattern = starting from precondition
 		
 		
 //		////////////////////////////////////////////////////////////////////////////////////////////////////////////
