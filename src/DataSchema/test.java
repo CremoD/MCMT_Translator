@@ -12,6 +12,8 @@ public class test {
 		RelationFactory relation_factory = RelationFactory.getInstance();
 		SortFactory sort_factory = SortFactory.getInstance();
 		CaseVariableFactory cv_factory = CaseVariableFactory.getInstance();
+		ConstantFactory constant_factory = ConstantFactory.getInstance();
+
 		
 		
 		
@@ -22,6 +24,9 @@ public class test {
 		CaseVariable c = cv_factory.getCaseVariable("winner", r2_sort, true);
 		CaseVariable c2 = cv_factory.getCaseVariable("looser", string_sort, true);
 
+		Constant refused = constant_factory.getConstant("Refused", string_sort);
+		Constant modified = constant_factory.getConstant("Modified", string_sort);
+		Constant acceptedd = constant_factory.getConstant("Accepted", string_sort);
 		
 		
 		CatalogRelation r1 = relation_factory.getCatalogRelation("R1");
@@ -42,7 +47,7 @@ public class test {
 		z.addAttribute("a1_z", r1_sort);
 		z.addAttribute("a2_z", string_sort);
 
-		printDeclaration(relation_factory, sort_factory, cv_factory);
+		printDeclaration(relation_factory, sort_factory, cv_factory, constant_factory);
 		
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//											Conjunctive Query												//
@@ -56,7 +61,7 @@ public class test {
 		// add FROM part
 		prova.addFrom(r1);
 		// add WHERE part
-		prova.addBinaryCondition(true, r1.getAttribute(0), c);
+		prova.addBinaryCondition(true, r1.getAttribute(0), modified);
 		prova.addBinaryCondition(true, r2.getAttribute(1), r1.getAttribute(3));
 		
 
@@ -125,13 +130,16 @@ public class test {
 	}
 	
 	
-	public static void printDeclaration(RelationFactory rf, SortFactory sf, CaseVariableFactory cvf) {
+	public static void printDeclaration(RelationFactory rf, SortFactory sf, CaseVariableFactory cvf, ConstantFactory c) {
 		System.out.println(sf.printSort());
+		System.out.println(c.printConstants());
 		System.out.println(rf.printCatalog());
 		System.out.println(rf.printRepository());
 		System.out.println(cvf.printCaseVariables());
 		System.out.println(sf.printSortList());
 		System.out.println(rf.printFunctions());
+		System.out.println(c.printConstantList());
+
 	}
 	
 

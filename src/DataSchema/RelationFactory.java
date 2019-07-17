@@ -73,7 +73,7 @@ public class RelationFactory {
 		for (CatalogRelation value : catalog.values()) {
 		    result += value.getFunctionNames();
 		}
-		return result + "\n";
+		return result;
 	}
 	
 	
