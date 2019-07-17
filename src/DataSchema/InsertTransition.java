@@ -34,8 +34,10 @@ public class InsertTransition {
 				for (int i = 0; i < r.arity(); i++) {
 					// case in which inserted attribute is not in the eevar
 					if (!eevar_association.containsKey(variables[i])) {
-						System.out.println("Inserted attribute is not an answer of the precondition");
-						return;
+						if (!ConstantFactory.constant_list.containsKey(variables[i])) {
+							System.out.println("Inserted attribute is not an answer of the precondition or constant");
+							return;
+						}
 					}
 					// control of the sorts to see if they match
 					if (!r.getAttribute(i).getSort().getName().equals(EevarManager.getSortByVariable(eevar_association.get(variables[i])).getName())) {

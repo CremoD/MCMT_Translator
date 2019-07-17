@@ -32,21 +32,39 @@ public class DeleteTransition {
 		for (RepositoryRelation rep : RelationFactory.repository.values()) {
 			if (rep.equals(r)) {
 				for (int i = 0; i < r.arity(); i++) {
+					boolean eevar = true;
 					// case in which inserted attribute is not in the eevar
 					if (!eevar_association.containsKey(variables[i])) {
-						System.out.println("Inserted attribute is not an answer of the precondition");
-						return;
+						if (!ConstantFactory.constant_list.containsKey(variables[i])) {
+							System.out.println("Deleted attribute is not an answer of the precondition or a constant");
+							return;
+						}
+						eevar = false;
 					}
-					// control of the sorts to see if they match
-					if (!r.getAttribute(i).getSort().getName().equals(EevarManager.getSortByVariable(eevar_association.get(variables[i])).getName())) {
+					// control of the sorts to see if they match, case eevar
+					if (eevar && !r.getAttribute(i).getSort().getName().equals(EevarManager.getSortByVariable(eevar_association.get(variables[i])).getName())) {
 						System.out.println("No matching between sorts");
 						return;
 					}
 					
-					if (!precondition.isIndex_present())
-						guard += "(= " + r.getName() + (i+1)+ "[x] " + eevar_association.get(variables[i]) + ") ";
-					else 
-						guard += "(= " + r.getName() + (i+1)+ "[y] " + eevar_association.get(variables[i]) + ") ";
+					// control of the sorts to see if they match, case constant
+					if (!eevar && !r.getAttribute(i).getSort().getName().equals(ConstantFactory.constant_list.get(variables[i]).getSort().getName())) {
+						System.out.println("No matching between sorts");
+						return;
+					}
+					
+					if (!precondition.isIndex_present()) {
+						if (eevar)
+							guard += "(= " + r.getName() + (i+1)+ "[x] " + eevar_association.get(variables[i]) + ") ";
+						else
+							guard += "(= " + r.getName() + (i+1)+ "[x] " + variables[i] + ") ";
+					}
+					else {
+						if (eevar)
+							guard += "(= " + r.getName() + (i+1)+ "[y] " + eevar_association.get(variables[i]) + ") ";
+						else
+							guard += "(= " + r.getName() + (i+1)+ "[y] " + variables[i] + ") ";
+					}
 					
 					local_update += ":val null" + "\n";
 					local_static += ":val " + rep.getName() + (i+1) + "[j]\n";
@@ -72,7 +90,20 @@ public class DeleteTransition {
 			return;
 		}
 		
-		set_table.put(cv, eevar_association.get(new_value));
+		// TODO control if new_value is in eevar_association or is a constant
+		boolean eevar = true;
+		if (!eevar_association.containsKey(new_value)) {
+			if (!ConstantFactory.constant_list.containsKey(new_value)) {
+				System.out.println("Deleted attribute is not an answer of the precondition or a constant");
+				return;
+			}
+			eevar = false;
+		}
+		
+		if (eevar)
+			set_table.put(cv, eevar_association.get(new_value));
+		else
+			set_table.put(cv, new_value);
 	}
 	
 	// generate global updates

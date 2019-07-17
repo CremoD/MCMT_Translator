@@ -101,7 +101,7 @@ public class test {
 //		System.out.println(it.generateMCMT());
 		
 		DeleteTransition del = new DeleteTransition("DeleteTrans1", prova);
-		del.delete(s, "id_r1", "a1_r2");
+		del.delete(s, "id_r1", "Modified");
 		del.set(c, "id_r2");
 		System.out.println();
 		System.out.println(del.generateMCMT());
