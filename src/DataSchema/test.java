@@ -1,10 +1,11 @@
 package DataSchema;
 
-
+import Exception.InvalidInputException;
+import Exception.UnmatchingSortException;
 
 public class test {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws UnmatchingSortException, InvalidInputException {
 		
 		// SCENARIO. Two catalog relations: R1 (id_r1, a1_r1, a2_r1, a3_r1) where id_r1 is PK, a1_r1 FK and rest strings 
 		//									R2 (id_r2, a1_r2) where id_r2 is PK and rest strings
