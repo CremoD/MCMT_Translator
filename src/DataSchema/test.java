@@ -100,6 +100,9 @@ public class test {
 		System.out.println();
 		System.out.println(it.generateMCMT());
 		
+		
+		BulkCondition con = new BulkCondition (s, s.getAttribute(0), s.getAttribute(1));
+		
 //		DeleteTransition del = new DeleteTransition("DeleteTrans1", prova);
 //		del.delete(s, "id_r1", "Modified");
 //		del.set(c, "id_r2");

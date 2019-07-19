@@ -63,6 +63,11 @@ public class CatalogRelation implements Relation{
 		return result;
 	}
 	
+	// method that gets name of function given number
+	public String getFunctionName(int num, String applied) {		
+		return this.name + "_f" + num + applied;
+	}
+	
 	// add attributes
 	public Attribute addAttribute(String name, Sort sort) {
 		Attribute attribute = new Attribute(name, sort);
