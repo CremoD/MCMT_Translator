@@ -92,20 +92,19 @@ public class test {
 		
 		
 		
-//		InsertTransition it = new InsertTransition("Transition1", prova);
-//		it.insert(s, "id_r1", "a1_r2");
-//		it.set(c, "id_r2");
-//		//it.set(c2, "looser2");
-//		
-//
-//		System.out.println();
-//		System.out.println(it.generateMCMT());
+		InsertTransition it = new InsertTransition("InsertTrans1", prova);
+		it.insert(s, "id_r1", "a1_r2");
+		it.set(c, "id_r2");
 		
-		DeleteTransition del = new DeleteTransition("DeleteTrans1", prova);
-		del.delete(s, "id_r1", "Modified");
-		del.set(c, "id_r2");
+
 		System.out.println();
-		System.out.println(del.generateMCMT());
+		System.out.println(it.generateMCMT());
+		
+//		DeleteTransition del = new DeleteTransition("DeleteTrans1", prova);
+//		del.delete(s, "id_r1", "Modified");
+//		del.set(c, "id_r2");
+//		System.out.println();
+//		System.out.println(del.generateMCMT());
 		
 		
 		// to do

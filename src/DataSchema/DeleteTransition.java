@@ -27,8 +27,7 @@ public class DeleteTransition {
 	public void delete(RepositoryRelation r, String... variables) throws InvalidInputException, UnmatchingSortException {
 		// first control that the attributes inserted matches the relation's arity
 		if (r.arity() != variables.length) {
-			System.out.println("No matching between arity of the relation and number of inserted values");
-			return;
+			throw new InvalidInputException("No matching between arity of the relation and number of deleted values. The number of inserted values should be " + r.arity());
 		}
 
 		// update part

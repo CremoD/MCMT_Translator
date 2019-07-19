@@ -2,6 +2,9 @@ package DataSchema;
 
 import java.util.HashMap;
 
+import Exception.InvalidInputException;
+import Exception.UnmatchingSortException;
+
 public class InsertTransition {
 	
 	private ConjunctiveSelectQuery precondition;
@@ -21,36 +24,32 @@ public class InsertTransition {
 	}
 	
 	// insert method (insert tuple <variables> into relation r)
-	public void insert(RepositoryRelation r, String...variables) {
+	public void insert(RepositoryRelation r, String...variables) throws InvalidInputException, UnmatchingSortException {
 		// first control that the attributes inserted matches the relation's arity
 		if (r.arity() != variables.length) {
-			System.out.println("No matching between arity of the relation and number of inserted values");
-			return;
+			throw new InvalidInputException("No matching between arity of the relation and number of inserted values. The number of inserted values should be " + r.arity());
 		}
 		
 		// update part
 		for (RepositoryRelation rep : RelationFactory.repository.values()) {
 			if (rep.equals(r)) {
 				for (int i = 0; i < r.arity(); i++) {
-					// case in which inserted attribute is not in the eevar
-					if (!eevar_association.containsKey(variables[i])) {
-						if (!ConstantFactory.constant_list.containsKey(variables[i])) {
-							System.out.println("Inserted attribute is not an answer of the precondition or constant");
-							return;
-						}
-					}
-					// control of the sorts to see if they match
-					if (!r.getAttribute(i).getSort().getName().equals(EevarManager.getSortByVariable(eevar_association.get(variables[i])).getName())) {
-						System.out.println("No matching between sorts");
-						return;
-					}
+					// control if it is eevar or constant
+					boolean eevar = isEevar(variables[i]);
+					
+					// control of the sorts to see if they match, case eevar
+					checkSorts(eevar, r.getAttribute(i).getSort(), variables[i]);
 					
 					if (!precondition.isIndex_present())
 						guard += "(= " + r.getName() + (i+1)+ "[x] null) ";
 					else 
 						guard += "(= " + r.getName() + (i+1)+ "[y] null) ";
 					
-					local_update += ":val " + eevar_association.get(variables[i]) + "\n";
+					if (eevar)
+						local_update += ":val " + eevar_association.get(variables[i]) + "\n";
+					else
+						local_update += ":val " + variables[i] + "\n";
+					
 					local_static += ":val " + rep.getName() + (i+1) + "[j]\n";
 				}
 			}
@@ -66,7 +65,7 @@ public class InsertTransition {
 
 	
 	// set method 
-	public void set(CaseVariable cv, String new_value) {
+	public void set(CaseVariable cv, String new_value) throws InvalidInputException, UnmatchingSortException {
 		// first step: control that the casevariable is in the collection of changes
 		// insert it if it is not present
 		if (set_table.containsKey(cv)) {
@@ -74,7 +73,13 @@ public class InsertTransition {
 			return;
 		}
 		
-		set_table.put(cv, eevar_association.get(new_value));
+		boolean eevar = isEevar(new_value);
+		checkSorts(eevar, cv.getSort(), new_value);
+		
+		if (eevar) 
+			set_table.put(cv, eevar_association.get(new_value));		
+		else 
+			set_table.put(cv, new_value);
 	}
 	
 	// generate global updates
@@ -150,6 +155,28 @@ public class InsertTransition {
 		}
 
 		return final_mcmt;
+	}
+	
+	// prova, check for matching method
+	public void checkSorts(boolean eevar, Sort first, String second) throws UnmatchingSortException {
+		if (eevar && !first.getName().equals(EevarManager.getSortByVariable(eevar_association.get(second)).getName())) {
+			throw new UnmatchingSortException("No matching between sorts: " + first.getName() + " VS "
+					+ EevarManager.getSortByVariable(eevar_association.get(second)).getName());
+		}
+		if (!eevar && !first.getName().equals(ConstantFactory.constant_list.get(second).getSort().getName())) {
+			throw new UnmatchingSortException("No matching between sorts: " + first.getName() + " VS "
+					+ ConstantFactory.constant_list.get(second).getSort().getName());
+		}
+	}
+
+	public boolean isEevar(String value) throws InvalidInputException {
+		if (!eevar_association.containsKey(value)) {
+			if (!ConstantFactory.constant_list.containsKey(value)) {
+				throw new InvalidInputException(value + " is not an answer of the precondition or a constant");
+			}
+			return false;
+		}
+		return true;
 	}
 	
 	
