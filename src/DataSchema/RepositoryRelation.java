@@ -82,9 +82,5 @@ public class RepositoryRelation implements Relation{
 		return result;
 	}
 	
-	// method for bulk update PROVA
-	public void bulkCondition (){
-		
-	}
 
 }

@@ -65,7 +65,12 @@ public class CatalogRelation implements Relation{
 	
 	// method that gets name of function given number
 	public String getFunctionName(int num, String applied) {		
-		return this.name + "_f" + num + applied;
+		return this.name + "_f" + num + " " + applied;
+	}
+	
+	// method that returns the arity of the relation
+	public int arity() {
+		return this.list_attributes.size();
 	}
 	
 	// add attributes
