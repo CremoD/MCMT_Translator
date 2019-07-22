@@ -23,6 +23,7 @@ public class BulkCondition {
 	public BulkCondition (RepositoryRelation relationToUpdate, String actualpath) throws InvalidInputException {
 		this.relationToUpdate = relationToUpdate;
 		this.condition = actualpath;
+		this.negated_condition = actualpath;
 		this.set_table = new HashMap<String, String>();
 	}
 	
@@ -49,18 +50,18 @@ public class BulkCondition {
 	
 	// methods for building the condition. 4 types, greater, smaller, equal, in catalog relation
 	public void addGreaterCondition (Attribute att, Object second) throws InvalidInputException {
-		condition += " (" + check_return_Attribute(att) + " > " + second + ")";
-		//negated_condition += " (not " + check_return_Attribute(att) + " > " + second + " )";
+		condition += " (> " + check_return_Attribute(att) + " " + second + ")";
+		negated_condition += " (not (> " + check_return_Attribute(att) + " " + second + "))";
 	}
 	
 	public void addSmallerCondition (Attribute att, Object second) throws InvalidInputException {
-		condition += " (" + check_return_Attribute(att) + " < " + second + ")";
-		//negated_condition += " (not " + check_return_Attribute(att) + " < " + second + " )";
+		condition += " (< " + check_return_Attribute(att) + " " + second + ")";
+		negated_condition += " (not (< " + check_return_Attribute(att) + " " + second + "))";
 	}
 	
 	public void addEqualCondition (Attribute att, Object second) throws InvalidInputException {
 		condition += " (= " + check_return_Attribute(att) + " " + second + ")";
-		//negated_condition += " (not (=" + check_return_Attribute(att) + " " + second + " ))";
+		negated_condition += " (not (= " + check_return_Attribute(att) + " " + second + "))";
 	}
 	
 	public void addInRelationCondition (CatalogRelation cat, Attribute...attributes) throws InvalidInputException {
@@ -86,12 +87,14 @@ public class BulkCondition {
 	
 	public BulkCondition addTrueChild () throws InvalidInputException {
 		BulkCondition new_condition = new BulkCondition(relationToUpdate, this.condition);
+		new_condition.setEevar_association(eevar_association);
 		this.true_node = new_condition;
 		return new_condition;
 	}
 	
 	public BulkCondition addFalseChild () throws InvalidInputException {
-		BulkCondition new_condition = new BulkCondition(relationToUpdate, this.condition);
+		BulkCondition new_condition = new BulkCondition(relationToUpdate, this.negated_condition);
+		new_condition.setEevar_association(eevar_association);
 		this.false_node = new_condition;
 		return new_condition;
 	}
@@ -111,6 +114,7 @@ public class BulkCondition {
 			throw new InvalidInputException("Attribute " + att.getName() + " already set");
 
 		this.set_table.put(check_return_Attribute(att), new_value);
+		this.isLeaf = true;
 	}
 	
 	// method for getting the correct mcmt declaration of local update
@@ -122,10 +126,10 @@ public class BulkCondition {
 				for (Attribute att : rep.getAttributes()) {
 					String corresponding_name = check_return_Attribute(att);
 					if (this.set_table.containsKey(corresponding_name)) {
-						this.mcmt_local_update += ": val " + this.set_table.get(corresponding_name) + "\n";
+						this.mcmt_local_update += ":val " + this.set_table.get(corresponding_name) + "\n";
 					}
 					else {
-						this.mcmt_local_update += ": val " + corresponding_name + "\n";
+						this.mcmt_local_update += ":val " + corresponding_name + "\n";
 					}
 				}
 			}
@@ -166,7 +170,7 @@ public class BulkCondition {
 	
 	// getters and setters
 	public String getCondition () {
-		return ":case" + this.condition;
+		return ":case" + this.condition + "\n";
 	}
 
 	public RepositoryRelation getRelationToUpdate() {
@@ -205,7 +209,8 @@ public class BulkCondition {
 		this.condition = condition;
 	}
 
-	public String getMcmt_local_update() {
+	public String getMcmt_local_update() throws InvalidInputException {
+		this.getLocalUpdate();
 		return mcmt_local_update;
 	}
 

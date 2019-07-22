@@ -102,15 +102,17 @@ public class test {
 		
 		BulkUpdate upd = new BulkUpdate ("superprova", prova, s);
 		
-		upd.root.addGreaterCondition(s.getAttribute(0), 12);
-		upd.root.addTrueChild().addSmallerCondition(s.getAttribute(1), 40);
+		upd.root.addEqualCondition(s.getAttribute(0), 12);
+		BulkCondition cond1 = upd.root.addTrueChild();
+		cond1.addEqualCondition(s.getAttribute(0), 14);
+		BulkCondition cond3 = cond1.addTrueChild();
+		cond3.set(s.getAttribute(0), "id_r1");
+		BulkCondition cond4 = cond1.addFalseChild();
+		cond4.set(s.getAttribute(1), "Modified");
+		BulkCondition cond2 = upd.root.addFalseChild();
+		cond2.set(s.getAttribute(1), "Modified");
 		
-		
-		BulkCondition con = new BulkCondition (s, "");
-		con.addInRelationCondition(r1, s.getAttribute(1), s.getAttribute(0), null, null);
-		
-		
-		System.out.println(con.getCondition());
+		System.out.println(upd.generateMCMT());
 		
 //		DeleteTransition del = new DeleteTransition("DeleteTrans1", prova);
 //		del.delete(s, "id_r1", "Modified");
