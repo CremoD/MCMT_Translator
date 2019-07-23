@@ -106,7 +106,12 @@ public class test {
 		upd.root.addSmallerCondition(s.getAttribute(0), 10);
 		
 		upd.root.addTrueChild().set(s.getAttribute(1), "Modified");
-		upd.root.addFalseChild().set(s.getAttribute(1), "Refused");
+		BulkCondition cond1 = upd.root.addFalseChild();
+		cond1.addGreaterCondition(s.getAttribute(1), 14);
+		cond1.addTrueChild().set(s.getAttribute(1), "Refused");
+		cond1.addFalseChild().set(s.getAttribute(1), "Accepted");
+
+		
 
 		
 

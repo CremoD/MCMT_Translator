@@ -11,6 +11,8 @@ public class BulkUpdate {
 	private String name;
 	private String guard;
 	private String final_mcmt = "";
+	private int numcases = 0;
+	private String case_update = "";
 	private RepositoryRelation toUpdate;
 	BulkCondition root;
 	
@@ -32,12 +34,8 @@ public class BulkUpdate {
 		for (CaseVariable cv : CaseVariableFactory.casevariable_list.values()) 
 				result += ":val " + cv.getName() + "\n";
 		
-		return result;
-
-		
+		return result;	
 	}
-	
-	
 	
 	// method to print the complete insert transition
 	public String generateMCMT() throws InvalidInputException {
@@ -49,8 +47,8 @@ public class BulkUpdate {
 		
 		//here to iterate through the three and print corresponding declaration
 		showTree();
-
-		
+		final_mcmt += ":numcases " + numcases + "\n";
+		final_mcmt += case_update;
 
 		return final_mcmt;
 	}
@@ -62,9 +60,10 @@ public class BulkUpdate {
 	public void showTree(BulkCondition node, String condition) throws InvalidInputException {
 		//base case
 		if (node.isLeaf()) {
-			final_mcmt += ":case" + condition + "\n";
-			final_mcmt += node.getLocalUpdate() + "\n";
-			final_mcmt += this.globalStatic() + "\n";
+			case_update += ":case" + condition + "\n";
+			case_update += node.getLocalUpdate() + "\n";
+			case_update += this.globalStatic() + "\n";
+			numcases++;
 			return;
 		}
 		
