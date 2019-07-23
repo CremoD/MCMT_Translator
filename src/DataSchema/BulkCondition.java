@@ -2,6 +2,7 @@ package DataSchema;
 
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import Exception.InvalidInputException;
@@ -15,21 +16,15 @@ public class BulkCondition {
 	private boolean isLeaf = false;
 	BulkCondition true_node;
 	BulkCondition false_node;
-	private String mcmt_local_update = "";
+	private ArrayList<String> false_list;
 	private HashMap<String, String> eevar_association;
 	private HashMap<String, String> set_table;
 
 	
-	public BulkCondition (RepositoryRelation relationToUpdate, String actualpath) throws InvalidInputException {
-		this.relationToUpdate = relationToUpdate;
-		this.condition = actualpath;
-		this.negated_condition = actualpath;
-		this.set_table = new HashMap<String, String>();
-	}
-	
 	public BulkCondition (RepositoryRelation relationToUpdate) throws InvalidInputException {
 		this.relationToUpdate = relationToUpdate;
 		this.set_table = new HashMap<String, String>();
+		this.false_list = new ArrayList<String>();
 
 	}
 	
@@ -51,17 +46,17 @@ public class BulkCondition {
 	// methods for building the condition. 4 types, greater, smaller, equal, in catalog relation
 	public void addGreaterCondition (Attribute att, Object second) throws InvalidInputException {
 		condition += " (> " + check_return_Attribute(att) + " " + second + ")";
-		negated_condition += " (not (> " + check_return_Attribute(att) + " " + second + "))";
+		this.false_list.add(" (not (> " + check_return_Attribute(att) + " " + second + "))");
 	}
 	
 	public void addSmallerCondition (Attribute att, Object second) throws InvalidInputException {
 		condition += " (< " + check_return_Attribute(att) + " " + second + ")";
-		negated_condition += " (not (< " + check_return_Attribute(att) + " " + second + "))";
+		this.false_list.add(" (not (< " + check_return_Attribute(att) + " " + second + "))");
 	}
 	
 	public void addEqualCondition (Attribute att, Object second) throws InvalidInputException {
 		condition += " (= " + check_return_Attribute(att) + " " + second + ")";
-		negated_condition += " (not (= " + check_return_Attribute(att) + " " + second + "))";
+		this.false_list.add(" (not (= " + check_return_Attribute(att) + " " + second + "))");
 	}
 	
 	public void addInRelationCondition (CatalogRelation cat, Attribute...attributes) throws InvalidInputException {
@@ -86,14 +81,14 @@ public class BulkCondition {
 	
 	
 	public BulkCondition addTrueChild () throws InvalidInputException {
-		BulkCondition new_condition = new BulkCondition(relationToUpdate, this.condition);
+		BulkCondition new_condition = new BulkCondition(relationToUpdate);
 		new_condition.setEevar_association(eevar_association);
 		this.true_node = new_condition;
 		return new_condition;
 	}
 	
 	public BulkCondition addFalseChild () throws InvalidInputException {
-		BulkCondition new_condition = new BulkCondition(relationToUpdate, this.negated_condition);
+		BulkCondition new_condition = new BulkCondition(relationToUpdate);
 		new_condition.setEevar_association(eevar_association);
 		this.false_node = new_condition;
 		return new_condition;
@@ -118,7 +113,8 @@ public class BulkCondition {
 	}
 	
 	// method for getting the correct mcmt declaration of local update
-	public void getLocalUpdate() throws InvalidInputException {
+	public String getLocalUpdate() throws InvalidInputException {
+		String result="";
 		// iterate through the repository relation factory and found the considered relation
 		for (RepositoryRelation rep : RelationFactory.repository.values()) {
 			// case in which is the updated one
@@ -126,10 +122,10 @@ public class BulkCondition {
 				for (Attribute att : rep.getAttributes()) {
 					String corresponding_name = check_return_Attribute(att);
 					if (this.set_table.containsKey(corresponding_name)) {
-						this.mcmt_local_update += ":val " + this.set_table.get(corresponding_name) + "\n";
+						result += ":val " + this.set_table.get(corresponding_name) + "\n";
 					}
 					else {
-						this.mcmt_local_update += ":val " + corresponding_name + "\n";
+						result += ":val " + corresponding_name + "\n";
 					}
 				}
 			}
@@ -137,10 +133,12 @@ public class BulkCondition {
 			// case in which this is not the update one
 			else {
 				for (int i = 0; i < rep.getAttributes().size(); i++) {
-					this.mcmt_local_update += ":val " + rep.getName() + (i+1) + "[j]\n";
+					result += ":val " + rep.getName() + (i+1) + "[j]\n";
 				}
 			}
 		}
+		
+		return result;
 	}
 	
 	
@@ -170,7 +168,7 @@ public class BulkCondition {
 	
 	// getters and setters
 	public String getCondition () {
-		return ":case" + this.condition + "\n";
+		return this.condition;
 	}
 
 	public RepositoryRelation getRelationToUpdate() {
@@ -209,15 +207,6 @@ public class BulkCondition {
 		this.condition = condition;
 	}
 
-	public String getMcmt_local_update() throws InvalidInputException {
-		this.getLocalUpdate();
-		return mcmt_local_update;
-	}
-
-	public void setMcmt_local_update(String mcmt_local_update) {
-		this.mcmt_local_update = mcmt_local_update;
-	}
-
 	public HashMap<String, String> getSet_table() {
 		return set_table;
 	}
@@ -225,6 +214,18 @@ public class BulkCondition {
 	public void setSet_table(HashMap<String, String> set_table) {
 		this.set_table = set_table;
 	}
+
+	public ArrayList<String> getFalse_list() {
+		return false_list;
+	}
+
+	public void setFalse_list(ArrayList<String> false_list) {
+		this.false_list = false_list;
+	}
+	
+	
+	
+	
 	
 	
 	

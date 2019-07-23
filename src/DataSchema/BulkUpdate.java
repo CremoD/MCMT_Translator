@@ -56,20 +56,22 @@ public class BulkUpdate {
 	}
 	
 	public void showTree() throws InvalidInputException {
-		showTree(this.root);
+		showTree(this.root, "");
 	}
 	
-	public void showTree(BulkCondition node) throws InvalidInputException {
+	public void showTree(BulkCondition node, String condition) throws InvalidInputException {
 		//base case
 		if (node.isLeaf()) {
-			final_mcmt += node.getCondition();
-			final_mcmt += node.getMcmt_local_update() + "\n";
+			final_mcmt += ":case" + condition + "\n";
+			final_mcmt += node.getLocalUpdate() + "\n";
 			final_mcmt += this.globalStatic() + "\n";
 			return;
 		}
 		
-		showTree(node.true_node);
-		showTree(node.false_node);
+		showTree(node.true_node, condition + node.getCondition());
+		for (String s : node.getFalse_list()) {
+			showTree(node.false_node, condition + s);
+		}
 	}
 
 	

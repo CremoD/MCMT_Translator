@@ -102,15 +102,16 @@ public class test {
 		
 		BulkUpdate upd = new BulkUpdate ("superprova", prova, s);
 		
-		upd.root.addEqualCondition(s.getAttribute(0), 12);
-		BulkCondition cond1 = upd.root.addTrueChild();
-		cond1.addEqualCondition(s.getAttribute(0), 14);
-		BulkCondition cond3 = cond1.addTrueChild();
-		cond3.set(s.getAttribute(0), "id_r1");
-		BulkCondition cond4 = cond1.addFalseChild();
-		cond4.set(s.getAttribute(1), "Modified");
-		BulkCondition cond2 = upd.root.addFalseChild();
-		cond2.set(s.getAttribute(1), "Modified");
+		upd.root.addGreaterCondition(s.getAttribute(0), 5);
+		upd.root.addSmallerCondition(s.getAttribute(0), 10);
+		
+		upd.root.addTrueChild().set(s.getAttribute(1), "Modified");
+		upd.root.addFalseChild().set(s.getAttribute(1), "Refused");
+
+		
+
+
+		
 		
 		System.out.println(upd.generateMCMT());
 		
