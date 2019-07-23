@@ -11,7 +11,7 @@ public class InvalidInputException extends Exception{
 	/**
 	 * Constructor of the exception which calls the constructor of the parent class and 
 	 * sends a message.
-	 * @param message the messages which explains the exception.
+	 * @param message the message which explains the exception.
 	 */
 	public InvalidInputException (String message){
 	    super(message);

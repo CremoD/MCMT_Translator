@@ -27,7 +27,7 @@ public class test {
 
 		Constant refused = constant_factory.getConstant("Refused", string_sort);
 		Constant modified = constant_factory.getConstant("Modified", string_sort);
-		Constant acceptedd = constant_factory.getConstant("Accepted", string_sort);
+		Constant accepted = constant_factory.getConstant("Accepted", string_sort);
 		
 		
 		CatalogRelation r1 = relation_factory.getCatalogRelation("R1");
@@ -100,6 +100,8 @@ public class test {
 		System.out.println();
 		System.out.println(it.generateMCMT());
 		
+		
+		// Case in which the three looks like this, look photo
 		BulkUpdate upd = new BulkUpdate ("superprova", prova, s);
 		
 		upd.root.addGreaterCondition(s.getAttribute(0), 5);

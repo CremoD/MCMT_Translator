@@ -1,19 +1,19 @@
 package Exception;
 
 /**
- * Class that extends Exception and represents an exception thrown if there is an improper use of sorts.
+ * Class that extends Exception and represents an exception thrown if the number of eevar exceeds 10.
  * @author DavideCremonini
  * @version 1.0
  * @since 18/07/2019
  */
-public class UnmatchingSortException extends Exception{
+public class EevarOverflowException extends Exception{
 
 	/**
 	 * Constructor of the exception which calls the constructor of the parent class and 
 	 * sends a message.
 	 * @param message the message which explains the exception.
 	 */
-	public UnmatchingSortException (String message){
+	public EevarOverflowException (String message){
 	    super(message);
 	}
 }
