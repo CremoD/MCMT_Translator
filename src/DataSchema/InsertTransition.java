@@ -5,7 +5,7 @@ import java.util.HashMap;
 import Exception.InvalidInputException;
 import Exception.UnmatchingSortException;
 
-public class InsertTransition {
+public class InsertTransition implements Transition{
 	
 	private ConjunctiveSelectQuery precondition;
 	private HashMap<String, String> eevar_association;
@@ -223,6 +223,13 @@ public class InsertTransition {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	@Override
+	public void addTaskGuard(String toAdd) {
+		// TODO Auto-generated method stub
+		this.guard += toAdd;
+		
 	}
 
 	

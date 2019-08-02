@@ -3,12 +3,14 @@ package DataSchema;
 import java.util.HashMap;
 
 import Exception.InvalidInputException;
+import Exception.UnmatchingSortException;
 
-public class BulkUpdate {
+public class BulkUpdate implements Transition{
 	
 	private ConjunctiveSelectQuery precondition;
 	private HashMap<String, String> eevar_association;
 	private String name;
+	private CaseVariable toSet; // only case in which there is a case variable to be changed, the lifecycle of current task
 	private String guard;
 	private String final_mcmt = "";
 	private int numcases = 0;
@@ -27,12 +29,21 @@ public class BulkUpdate {
 		this.root.setEevar_association(this.eevar_association);
 	}
 	
+	// set method
+	public void set(CaseVariable cv, String new_value) throws InvalidInputException, UnmatchingSortException {
+		this.toSet = cv;
+	}
+	
 	
 	// method for getting once the string representing the list of immutated case variables
 	public String globalStatic() {
 		String result = "";
-		for (CaseVariable cv : CaseVariableFactory.casevariable_list.values()) 
+		for (CaseVariable cv : CaseVariableFactory.casevariable_list.values()) {
+			if (cv == this.toSet)
+				result += ":val Completed\n";
+			else 
 				result += ":val " + cv.getName() + "\n";
+		}
 		
 		return result;	
 	}
@@ -133,6 +144,13 @@ public class BulkUpdate {
 
 	public void setToUpdate(RepositoryRelation toUpdate) {
 		this.toUpdate = toUpdate;
+	}
+
+
+	@Override
+	public void addTaskGuard(String toAdd) {
+		// TODO Auto-generated method stub
+		this.guard += toAdd;
 	}
 	
 	

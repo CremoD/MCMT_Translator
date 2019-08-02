@@ -5,7 +5,7 @@ import java.util.HashMap;
 import Exception.InvalidInputException;
 import Exception.UnmatchingSortException;
 
-public class DeleteTransition {
+public class DeleteTransition implements Transition{
 
 	private ConjunctiveSelectQuery precondition;
 	private HashMap<String, String> eevar_association;
@@ -237,6 +237,12 @@ public class DeleteTransition {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	@Override
+	public void addTaskGuard(String toAdd) {
+		// TODO Auto-generated method stub
+		this.guard += toAdd;
 	}
 
 }

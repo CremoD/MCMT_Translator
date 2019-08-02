@@ -130,9 +130,11 @@ public class test {
 		
 		
 		Block b = new SequenceBlock("Ciao");
-		((SequenceBlock)b).addB1(new SequenceBlock("prova1"));
+		Block ccc = new Task("task_prova", it);
+		((SequenceBlock)b).addB1(ccc);
 		((SequenceBlock)b).addB2(new SequenceBlock("prova2"));
-		System.out.print(b.mcmt_translation());
+		System.out.println(b.mcmt_translation());
+		System.out.println(ccc.mcmt_translation());
 		
 
 
