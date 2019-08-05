@@ -7,16 +7,19 @@ import com.healthmarketscience.sqlbuilder.BinaryCondition;
 import com.healthmarketscience.sqlbuilder.SelectQuery;
 import com.healthmarketscience.sqlbuilder.dbspec.basic.DbTable;
 
+import Exception.EevarOverflowException;
+
 public class ConjunctiveSelectQuery {
 	
 	private SelectQuery select_query;
 	private HashMap<String, DbTable> tables;
 	private String mcmt = "";
+	private String negated_mcmt = "";
 	private HashMap<String, String> ref_manager; // key is internal name, value is global eevar
 	private boolean index_present = false;
 
 	// constructor
-	public ConjunctiveSelectQuery(Attribute...attributes) {
+	public ConjunctiveSelectQuery(Attribute...attributes) throws EevarOverflowException {
 		this.tables = new HashMap<String, DbTable>();
 		this.select_query = new SelectQuery();
 		this.ref_manager = new HashMap<String, String>();
@@ -75,16 +78,18 @@ public class ConjunctiveSelectQuery {
 		if(equal) {
 			select_query.addCondition(BinaryCondition.equalTo(first, second));
 			mcmt += cond + " ";
+			negated_mcmt += "(not " + cond + ") ";
 		}
 		else {
 			select_query.addCondition(BinaryCondition.notEqualTo(first, second));
 			mcmt += "(not " + cond + ") ";
+			negated_mcmt += cond + " ";
 		}
 	}
 	
 	
 	// add relation in from clause
-	public void addFrom(Relation r) {
+	public void addFrom(Relation r) throws EevarOverflowException {
 		if (r instanceof CatalogRelation)
 			addFrom((CatalogRelation) r);
 		else
@@ -93,7 +98,7 @@ public class ConjunctiveSelectQuery {
 	}
 	
 	// add from catalog relation
-	public void addFrom(CatalogRelation rel) {
+	public void addFrom(CatalogRelation rel) throws EevarOverflowException {
 		DbTable table = rel.getDbTable();
 
 		if (!tables.containsKey(table.getAlias())) {
@@ -109,7 +114,7 @@ public class ConjunctiveSelectQuery {
 	}
 	
 	// add from tables
-	public void addFrom(RepositoryRelation rel) {
+	public void addFrom(RepositoryRelation rel) throws EevarOverflowException {
 		DbTable table = rel.getDbTable();
 
 		if (!tables.containsKey(table.getAlias())) {
@@ -168,10 +173,15 @@ public class ConjunctiveSelectQuery {
 	public void setRef_manager(HashMap<String, String> ref_manager) {
 		this.ref_manager = ref_manager;
 	}
+	public String getNegated_mcmt() {
+		return negated_mcmt;
+	}
+	public void setNegated_mcmt(String negated_mcmt) {
+		this.negated_mcmt = negated_mcmt;
+	}
 
-	
 	// method that performs eevar association
-	public void addReferenceVariable(Attribute att) {
+	public void addReferenceVariable(Attribute att) throws EevarOverflowException {
 		// 1 ) check in the reference manager
 		if (this.ref_manager.containsKey(att.getName()))
 			return;

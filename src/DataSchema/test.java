@@ -1,12 +1,13 @@
 package DataSchema;
 
 import ControlFlow.*;
+import Exception.EevarOverflowException;
 import Exception.InvalidInputException;
 import Exception.UnmatchingSortException;
 
 public class test {
 
-	public static void main(String[] args) throws UnmatchingSortException, InvalidInputException {
+	public static void main(String[] args) throws UnmatchingSortException, InvalidInputException, EevarOverflowException {
 		
 		// SCENARIO. Two catalog relations: R1 (id_r1, a1_r1, a2_r1, a3_r1) where id_r1 is PK, a1_r1 FK and rest strings 
 		//									R2 (id_r2, a1_r2) where id_r2 is PK and rest strings
@@ -34,6 +35,8 @@ public class test {
 		Constant enabled = constant_factory.getConstant("Enabled", string_sort);
 		Constant active = constant_factory.getConstant("Active", string_sort);
 		Constant completed = constant_factory.getConstant("Completed", string_sort);
+		Constant active1 = constant_factory.getConstant("Active1", string_sort);
+		Constant active2 = constant_factory.getConstant("Active2", string_sort);
 
 		
 		
@@ -129,12 +132,21 @@ public class test {
 		System.out.println(upd.generateMCMT());
 		
 		
-		Block b = new SequenceBlock("Ciao");
-		Block ccc = new Task("task_prova", it);
-		((SequenceBlock)b).addB1(ccc);
-		((SequenceBlock)b).addB2(new SequenceBlock("prova2"));
-		System.out.println(b.mcmt_translation());
-		System.out.println(ccc.mcmt_translation());
+//		Block b = new ParallelBlock("Ciao");
+//		Block ccc = new Task("task_prova", it);
+//		((ParallelBlock)b).addB1(ccc);
+//		((ParallelBlock)b).addB2(new SequenceBlock("prova2"));
+//		System.out.println(b.mcmt_translation());
+//		System.out.println(ccc.mcmt_translation());
+		
+		ExclusiveChoiceBlock b = new ExclusiveChoiceBlock("exclusive");
+		b.addB1(new SequenceBlock("prova1"));
+		b.addB2(new SequenceBlock("prova2"));
+		ConjunctiveSelectQuery ei = new ConjunctiveSelectQuery();
+		ei.addBinaryCondition(true, c, "Modified");
+		b.addCond(ei);
+		System.out.print(b.mcmt_translation());
+
 		
 
 

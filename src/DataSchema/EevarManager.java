@@ -9,15 +9,16 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 
+import Exception.EevarOverflowException;
+
 public class EevarManager {
 	private static Multimap<Sort, String> eevar_list = HashMultimap.create();;
 	
 	
-	public static String addEevar(Sort sort) {
+	public static String addEevar(Sort sort) throws EevarOverflowException  {
 		// check the size of the eevar_list
 		if (eevar_list.size() == 10) {
-			System.out.println("Maximum number of eevar added, sorry"); // throw exception
-			return "";
+			throw new EevarOverflowException("Maximum number of eevar added, sorry"); // throw exception
 		}
 		else {
 			eevar_list.put(sort,  "E" + (eevar_list.size() + 1));
