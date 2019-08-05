@@ -38,35 +38,35 @@ public class LoopBlock extends Block{
 		// TODO Auto-generated method stub
 		String result = "";
 
-		// first part: itself ENABLED and cond TRUE --> B1 ENABLED and itself ACTIVE
+		// first part: itself ENABLED --> B1 ENABLED and itself ACTIVE
 		ConjunctiveSelectQuery firstG = new ConjunctiveSelectQuery();
 		firstG.addBinaryCondition(true, this.life_cycle, "Enabled");
 		InsertTransition firstU = new InsertTransition(this.name + " first translation", firstG);
-		firstU.addTaskGuard(cond.getMCMT());
 		firstU.set(this.life_cycle, "Active");
 		firstU.set(this.sub_blocks[0].life_cycle, "Enabled");
 
-		// second part: itself ENABLED and cond FALSE --> B2 ENABLED and itself ACTIVE
+		// second part: B1 completed and cond TRUE --> B1 IDLE and B2 ENABLED 
 		ConjunctiveSelectQuery secondG = new ConjunctiveSelectQuery();
-		secondG.addBinaryCondition(true, this.life_cycle, "Enabled");
+		secondG.addBinaryCondition(true, this.sub_blocks[0].life_cycle, "Completed");
 		InsertTransition secondU = new InsertTransition(this.name + " second translation", secondG);
-		secondU.addTaskGuard(cond.getNegated_mcmt());
-		secondU.set(this.life_cycle, "Active");
+		secondU.addTaskGuard(cond.getMCMT());
 		secondU.set(this.sub_blocks[1].life_cycle, "Enabled");
+		secondU.set(this.sub_blocks[0].life_cycle, "Idle");
 		
 
-		// third part: B1 completed --> B1 IDLE and itself COMPLETED
+		// third part: B2 completed --> B1 ENABLED and B2 IDLE
 		ConjunctiveSelectQuery thirdG = new ConjunctiveSelectQuery();
-		thirdG.addBinaryCondition(true, this.sub_blocks[0].life_cycle, "Completed");
+		thirdG.addBinaryCondition(true, this.sub_blocks[1].life_cycle, "Completed");
 		InsertTransition thirdU = new InsertTransition(this.name + " third translation", thirdG);
-		thirdU.set(this.life_cycle, "Completed");
-		thirdU.set(this.sub_blocks[0].life_cycle, "Idle");
+		thirdU.set(this.sub_blocks[1].life_cycle, "Idle");
+		thirdU.set(this.sub_blocks[0].life_cycle, "Enabled");
 		
-		// fourth part:  B2 completed --> B2 IDLE and itself COMPLETED
+		// fourth part:  B1 completed and cond FALSE --> B1 IDLE and itself COMPLETED
 		ConjunctiveSelectQuery fourthG = new ConjunctiveSelectQuery();
-		fourthG.addBinaryCondition(true, this.sub_blocks[1].life_cycle, "Completed");
+		fourthG.addBinaryCondition(true, this.sub_blocks[0].life_cycle, "Completed");
 		InsertTransition fourthU = new InsertTransition(this.name + " fourth translation", fourthG);
-		fourthU.set(this.sub_blocks[1].life_cycle, "Idle");
+		fourthU.addTaskGuard(cond.getNegated_mcmt());
+		fourthU.set(this.sub_blocks[0].life_cycle, "Idle");
 		fourthU.set(this.life_cycle, "Completed");
 		
 		

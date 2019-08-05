@@ -139,7 +139,7 @@ public class test {
 //		System.out.println(b.mcmt_translation());
 //		System.out.println(ccc.mcmt_translation());
 		
-		ExclusiveChoiceBlock b = new ExclusiveChoiceBlock("exclusive");
+		LoopBlock b = new LoopBlock("loop");
 		b.addB1(new SequenceBlock("prova1"));
 		b.addB2(new SequenceBlock("prova2"));
 		ConjunctiveSelectQuery ei = new ConjunctiveSelectQuery();
