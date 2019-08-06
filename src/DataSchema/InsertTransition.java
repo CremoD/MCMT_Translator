@@ -18,7 +18,10 @@ public class InsertTransition implements Transition{
 	public InsertTransition(String name, ConjunctiveSelectQuery precondition) {
 		this.precondition = precondition;
 		this.eevar_association = precondition.getRef_manager();
-		this.guard = precondition.getMCMT();
+		if (!precondition.getMCMT().equals(""))
+			this.guard = precondition.getMCMT();
+		else 
+			this.guard = "true";
 		this.set_table = new HashMap<CaseVariable, String>();
 		this.name = name;
 	}
@@ -151,7 +154,7 @@ public class InsertTransition implements Transition{
 			final_mcmt += this.generateGlobalMCMT();
 			final_mcmt += "\n:case\n";
 			final_mcmt += local_static + "\n";
-			final_mcmt += this.generateGlobalMCMT();
+			final_mcmt += this.generateGlobalMCMT() + "\n";
 		}
 
 		return final_mcmt;

@@ -58,7 +58,6 @@ public class test {
 		z.addAttribute("a1_z", r1_sort);
 		z.addAttribute("a2_z", string_sort);
 
-		printDeclaration(relation_factory, sort_factory, cv_factory, constant_factory);
 		
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//											Conjunctive Query												//
@@ -78,12 +77,11 @@ public class test {
 
 
 
-		System.out.println(prova.getQueryString());
-		System.out.println();
-		System.out.println(prova.getMCMT());
+		//System.out.println(prova.getQueryString());
+		//System.out.println();
+		//System.out.println(prova.getMCMT());
 		
 		System.out.println();
-		System.out.println(EevarManager.printEevar());
 		
 		
 //		// create conjunctive query with list of columns of the select part
@@ -108,7 +106,7 @@ public class test {
 		
 
 		System.out.println();
-		System.out.println(it.generateMCMT());
+		//System.out.println(it.generateMCMT());
 		
 		
 		// Case in which the three looks like this, look photo
@@ -129,7 +127,7 @@ public class test {
 
 		
 		
-		System.out.println(upd.generateMCMT());
+		//System.out.println(upd.generateMCMT());
 		
 		
 //		Block b = new ParallelBlock("Ciao");
@@ -138,14 +136,33 @@ public class test {
 //		((ParallelBlock)b).addB2(new SequenceBlock("prova2"));
 //		System.out.println(b.mcmt_translation());
 //		System.out.println(ccc.mcmt_translation());
+		Task t1 = new Task ("task1", it);
+		Task t2 = new Task ("task2", it);
+		Task t3 = new Task ("task3", upd);
 		
-		LoopBlock b = new LoopBlock("loop");
-		b.addB1(new SequenceBlock("prova1"));
-		b.addB2(new SequenceBlock("prova2"));
-		ConjunctiveSelectQuery ei = new ConjunctiveSelectQuery();
-		ei.addBinaryCondition(true, c, "Modified");
-		b.addCond(ei);
-		System.out.print(b.mcmt_translation());
+		
+	
+		
+		ConjunctiveSelectQuery ciao = new ConjunctiveSelectQuery();
+		ciao.addBinaryCondition(true, c, "Ciao");
+		LoopBlock lb = new LoopBlock("loop", ciao);
+		lb.addB1(t2);
+		lb.addB2(t3);
+		
+		SequenceBlock seq = new SequenceBlock("sequence_block");
+		seq.addB1(t1);
+		seq.addB2(lb);
+		
+		ProcessBlock b = new ProcessBlock("root_process");
+		b.addB1(seq);
+		
+		MainProcess bigProcess = new MainProcess(b);
+		
+		printDeclaration(relation_factory, sort_factory, cv_factory, constant_factory);
+		System.out.println(EevarManager.printEevar());
+		System.out.print(bigProcess.process_mcmt_generation());
+		
+		
 
 		
 
