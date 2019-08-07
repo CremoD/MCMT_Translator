@@ -6,11 +6,20 @@ public class ConstantFactory {
 
 	// create an object of Case Variable Factory (singleton pattern)
 	private static ConstantFactory constant_factory = new ConstantFactory();
-	public static HashMap<String, Constant> constant_list = new HashMap<String, Constant>();
+	public static HashMap<String, Constant> constant_list;
 
 	// make the constructor private so that this class cannot be instantiated
 	private ConstantFactory() {
-		}
+		constant_list = new HashMap<String, Constant>();
+		SortFactory sort_factory = SortFactory.getInstance();
+		Sort string_sort = sort_factory.getSort("String_sort");
+		getConstant("Idle", string_sort);
+		getConstant("Enabled", string_sort);
+		getConstant("Active", string_sort);
+		getConstant("Completed", string_sort);
+		getConstant("Active1", string_sort);
+		getConstant("Active2", string_sort);
+	}
 
 	// get the unique object
 	public static ConstantFactory getInstance() {
@@ -47,5 +56,6 @@ public class ConstantFactory {
 		}
 		return result + "\n";
 	}
+	
 
 }

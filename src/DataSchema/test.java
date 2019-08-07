@@ -9,37 +9,28 @@ public class test {
 
 	public static void main(String[] args) throws UnmatchingSortException, InvalidInputException, EevarOverflowException {
 		
-		// SCENARIO. Two catalog relations: R1 (id_r1, a1_r1, a2_r1, a3_r1) where id_r1 is PK, a1_r1 FK and rest strings 
-		//									R2 (id_r2, a1_r2) where id_r2 is PK and rest strings
-		// 			 Two repos relation:	S (a1_s, a2_s) 
-		//									Z (a1_z, a2_z)
+		// Wrappers of relations, sorts, casevariables and constants
 		RelationFactory relation_factory = RelationFactory.getInstance();
 		SortFactory sort_factory = SortFactory.getInstance();
 		CaseVariableFactory cv_factory = CaseVariableFactory.getInstance();
 		ConstantFactory constant_factory = ConstantFactory.getInstance();
 
-		
-		
-		
+		// Sorts
 		Sort r1_sort = sort_factory.getSort("R1_sort");
 		Sort r2_sort = sort_factory.getSort("R2_sort");
 		Sort string_sort = sort_factory.getSort("String_sort");
 		
+		// CaseVariables
 		CaseVariable c = cv_factory.getCaseVariable("winner", r2_sort, true);
 		CaseVariable c2 = cv_factory.getCaseVariable("looser", string_sort, true);
 
+		// Constants, the constants strictly related to the blocks are already set at the beginning
+		// into the wrapper class ConstantFactory
 		Constant refused = constant_factory.getConstant("Refused", string_sort);
 		Constant modified = constant_factory.getConstant("Modified", string_sort);
 		Constant accepted = constant_factory.getConstant("Accepted", string_sort);
-		Constant idle = constant_factory.getConstant("Idle", string_sort);
-		Constant enabled = constant_factory.getConstant("Enabled", string_sort);
-		Constant active = constant_factory.getConstant("Active", string_sort);
-		Constant completed = constant_factory.getConstant("Completed", string_sort);
-		Constant active1 = constant_factory.getConstant("Active1", string_sort);
-		Constant active2 = constant_factory.getConstant("Active2", string_sort);
-
 		
-		
+		// Relations
 		CatalogRelation r1 = relation_factory.getCatalogRelation("R1");
 		r1.addAttribute("id_r1", r1_sort);
 		r1.addAttribute("a1_r1", r2_sort);
@@ -60,53 +51,21 @@ public class test {
 
 		
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		//											Conjunctive Query												//
+		//											Process definition												//
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
-		// create alias for join between same table r1. Ask for confirmation
-		//CatalogRelation aliasr1 = r1.getAlias();
-
 		// create conjunctive query with list of columns of the select part
 		ConjunctiveSelectQuery prova = new ConjunctiveSelectQuery(r1.getAttribute(0), r2.getAttribute(1));
-		// add FROM part
 		prova.addFrom(r1);
-		// add WHERE part
 		prova.addBinaryCondition(true, r1.getAttribute(0), modified);
 		prova.addBinaryCondition(true, r2.getAttribute(1), r1.getAttribute(3));
-		
-
-
-
-		//System.out.println(prova.getQueryString());
-		//System.out.println();
-		//System.out.println(prova.getMCMT());
-		
-		System.out.println();
-		
-		
-//		// create conjunctive query with list of columns of the select part
-//		ConjunctiveSelectQuery prova2 = new ConjunctiveSelectQuery(r2.getAttribute(1));
-//		// add FROM part
-//		prova2.addFrom(s);
-//		// add WHERE part
-//		prova2.addBinaryCondition(true, s.getAttribute(0), c);
-//		prova2.addBinaryCondition(true, r2.getAttribute(1), c2);
-//		
-//		System.out.println();
-//		System.out.println(prova2.getQueryString());
-//		System.out.println();
-//		System.out.println(prova2.getMCMT());
-		
-		
-		
 		
 		InsertTransition it = new InsertTransition("InsertTrans1", prova);
 		it.insert(s, "id_r1", "a1_r2");
 		it.set(c, "id_r2");
 		
-
-		System.out.println();
-		//System.out.println(it.generateMCMT());
+		InsertTransition it2 = new InsertTransition("InsertTrans2", prova);
+		it2.set(c, "id_r2");
 		
 		
 		// Case in which the three looks like this, look photo
@@ -121,28 +80,12 @@ public class test {
 		cond1.addTrueChild().set(s.getAttribute(1), "Refused");
 		cond1.addFalseChild().set(s.getAttribute(1), "Accepted");
 
+		// example
 		
-
-		
-
-		
-		
-		//System.out.println(upd.generateMCMT());
-		
-		
-//		Block b = new ParallelBlock("Ciao");
-//		Block ccc = new Task("task_prova", it);
-//		((ParallelBlock)b).addB1(ccc);
-//		((ParallelBlock)b).addB2(new SequenceBlock("prova2"));
-//		System.out.println(b.mcmt_translation());
-//		System.out.println(ccc.mcmt_translation());
 		Task t1 = new Task ("task1", it);
-		Task t2 = new Task ("task2", it);
+		Task t2 = new Task ("task2", it2);
 		Task t3 = new Task ("task3", upd);
-		
-		
-	
-		
+
 		ConjunctiveSelectQuery ciao = new ConjunctiveSelectQuery();
 		ciao.addBinaryCondition(true, c, "Ciao");
 		LoopBlock lb = new LoopBlock("loop", ciao);
@@ -162,45 +105,6 @@ public class test {
 		System.out.println(EevarManager.printEevar());
 		System.out.print(bigProcess.process_mcmt_generation());
 		
-		
-
-		
-
-
-		
-
-		
-
-
-		
-		
-//		DeleteTransition del = new DeleteTransition("DeleteTrans1", prova);
-//		del.delete(s, "id_r1", "Modified");
-//		del.set(c, "id_r2");
-//		System.out.println();
-//		System.out.println(del.generateMCMT());
-		
-		
-		// to do
-		// reference variables and reference relations
-		// change name to InsertSet
-		// eevar system
-		// builder pattern = starting from precondition
-		
-		
-//		////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//		//											Union Conjunctive Query											//
-//		////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//		 //create conjunctive query with list of columns of the select part
-//		ConjunctiveSelectQuery prova2 = new ConjunctiveSelectQuery(r1.getAttributeColumn(0), r2.getAttributeColumn(1));
-//		// add WHERE part
-//		prova2.addBinaryCondition(false, 1, r1.getAttributeColumn(1));
-//		prova2.addBinaryCondition(true, 3, r1.getAttributeColumn(1));
-//		
-//		UnionConjunctiveQuery u = new UnionConjunctiveQuery(prova, prova2);
-//		
-//		System.out.println();
-//		System.out.println(u.getQueryString());
 	}
 	
 	

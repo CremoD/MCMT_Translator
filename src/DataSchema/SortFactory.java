@@ -5,10 +5,12 @@ import java.util.HashMap;
 public class SortFactory {
 	// create an object of Relation Factory (singleton pattern)
 	private static SortFactory sort_factory = new SortFactory ();
-	private static HashMap<String, Sort> sorts = new HashMap<String, Sort>();
+	public static HashMap<String, Sort> sorts;
 	
 	// make the constructor private so that this class cannot be instantiated
-	private SortFactory() {}
+	private SortFactory() {
+		sorts = new HashMap<String, Sort>();
+	}
 	
 	// get the unique object
 	public static SortFactory getInstance() {
