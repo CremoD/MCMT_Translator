@@ -9,7 +9,6 @@ import Exception.InvalidInputException;
 import Exception.UnmatchingSortException;
 
 public class InclusiveOrBlock extends Block{
-	private String name;
 	private ConjunctiveSelectQuery cond1;
 	private ConjunctiveSelectQuery cond2;
 	

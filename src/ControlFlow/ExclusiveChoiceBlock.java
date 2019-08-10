@@ -10,7 +10,6 @@ import Exception.UnmatchingSortException;
 
 public class ExclusiveChoiceBlock extends Block{
 
-	private String name;
 	private ConjunctiveSelectQuery cond;
 	
 	public ExclusiveChoiceBlock (String name) {

@@ -10,7 +10,6 @@ import Exception.UnmatchingSortException;
 
 public class DeferredChoiceBlock extends Block{
 
-	private String name;
 	
 	public DeferredChoiceBlock (String name) {
 		this.name = name;

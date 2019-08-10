@@ -9,7 +9,6 @@ import Exception.InvalidInputException;
 import Exception.UnmatchingSortException;
 
 public class SequenceBlock extends Block{
-	private String name;
 	
 	public SequenceBlock (String name) {
 		this.name = name;

@@ -72,7 +72,7 @@ public class InsertTransition implements Transition{
 		// first step: control that the casevariable is in the collection of changes
 		// insert it if it is not present
 		if (set_table.containsKey(cv)) {
-			System.out.println("Variable already set");
+			System.out.println("Variable already set " + cv.getName() + " in " + this.name);
 			return;
 		}
 		

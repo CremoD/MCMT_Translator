@@ -9,7 +9,6 @@ import Exception.InvalidInputException;
 import Exception.UnmatchingSortException;
 
 public class ParallelBlock extends Block{
-	private String name;
 	
 	public ParallelBlock (String name) {
 		this.name = name;

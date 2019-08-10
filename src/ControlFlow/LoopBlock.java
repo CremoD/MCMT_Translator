@@ -10,7 +10,6 @@ import Exception.UnmatchingSortException;
 
 public class LoopBlock extends Block{
 
-	private String name;
 	private ConjunctiveSelectQuery cond;
 	
 	public LoopBlock (String name) {

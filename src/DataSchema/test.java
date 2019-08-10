@@ -80,30 +80,49 @@ public class test {
 		cond1.addTrueChild().set(s.getAttribute(1), "Refused");
 		cond1.addFalseChild().set(s.getAttribute(1), "Accepted");
 
-		// example
+//		// example
+//		
+//		Task t1 = new Task ("task1", it);
+//		Task t2 = new Task ("task2", it2);
+//		Task t3 = new Task ("task3", upd);
+//
+//		ConjunctiveSelectQuery ciao = new ConjunctiveSelectQuery();
+//		ciao.addBinaryCondition(true, c, "Ciao");
+//		LoopBlock lb = new LoopBlock("loop", ciao);
+//		lb.addB1(t2);
+//		lb.addB2(t3);
+//		
+//		SequenceBlock seq = new SequenceBlock("sequence_block");
+//		seq.addB1(t1);
+//		seq.addB2(lb);
+//		
+//		ProcessBlock b = new ProcessBlock("root_process");
+//		b.addB1(seq);
+		
 		
 		Task t1 = new Task ("task1", it);
 		Task t2 = new Task ("task2", it2);
-		Task t3 = new Task ("task3", upd);
-
-		ConjunctiveSelectQuery ciao = new ConjunctiveSelectQuery();
-		ciao.addBinaryCondition(true, c, "Ciao");
-		LoopBlock lb = new LoopBlock("loop", ciao);
-		lb.addB1(t2);
-		lb.addB2(t3);
+		Task t3 = new Task("task3", upd);
 		
 		SequenceBlock seq = new SequenceBlock("sequence_block");
 		seq.addB1(t1);
-		seq.addB2(lb);
+		seq.addB2(t2);
+		
+		BackwardExceptionBlock exc = new BackwardExceptionBlock("exception");
+		exc.addB1(seq);
+		exc.addB2(t3);
 		
 		ProcessBlock b = new ProcessBlock("root_process");
-		b.addB1(seq);
+		b.addB1(exc);
+		
+		
 		
 		MainProcess bigProcess = new MainProcess(b);
 		
 		printDeclaration(relation_factory, sort_factory, cv_factory, constant_factory);
 		System.out.println(EevarManager.printEevar());
 		System.out.print(bigProcess.process_mcmt_generation());
+	
 		
 	}
 	
