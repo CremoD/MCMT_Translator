@@ -142,7 +142,7 @@ public class InsertTransition implements Transition{
 
 		// one case
 		if (this.is_oneCase())
-			final_mcmt += this.generateOneCaseMCMT();
+			final_mcmt += this.generateOneCaseMCMT() + "\n";
 		// 2 cases
 		else {
 			if (this.precondition.isIndex_present())

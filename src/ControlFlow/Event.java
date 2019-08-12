@@ -1,33 +1,39 @@
 package ControlFlow;
 
 import DataSchema.CaseVariableFactory;
+import DataSchema.InsertTransition;
 import DataSchema.SortFactory;
-import DataSchema.Transition;
 import Exception.InvalidInputException;
 import Exception.UnmatchingSortException;
 
-public class Task extends Block{
-	private Transition effect;
+public class Event extends Block{
+	private InsertTransition effect = null;
 	
-	public Task (String name) {
+	public Event (String name) {
 		this.name = name;
 		this.sub_blocks = new Block[0];
 		this.life_cycle = CaseVariableFactory.getInstance().getCaseVariable("lifecycle_" + name, SortFactory.getInstance().getSort("String_sort"), true);
 	}
 	
-	public Task (String name, Transition eff) {
+	public Event (String name, InsertTransition eff) {
 		this.name = name;
 		this.effect = eff;
 		this.sub_blocks = new Block[0];
 		this.life_cycle = CaseVariableFactory.getInstance().getCaseVariable("lifecycle_" + name, SortFactory.getInstance().getSort("String_sort"), true);
 	}
 	
-	public void addTransition (Transition eff) {
+	public void addTransition (InsertTransition eff) {
 		this.effect = eff;
 	}
 	
-	public Transition getTransition() {
+	public InsertTransition getTransition() {
 		return this.effect;
+	}
+	
+	public boolean hasEffect() {
+		if (this.effect != null)
+			return true;
+		return false;
 	}
 	
 	
@@ -36,9 +42,10 @@ public class Task extends Block{
 	public String mcmt_translation() throws InvalidInputException, UnmatchingSortException {
 		String result = "";
 		
-		this.effect.addTaskGuard("(= " + this.life_cycle.getName() + " Enabled)");
-		this.effect.set(this.life_cycle, "Completed");
-		result += this.effect.generateMCMT();
+		// control if this event has an effect
+		if (this.effect != null)
+			result += this.effect.generateMCMT();
+	
 		
 		return result;
 	}

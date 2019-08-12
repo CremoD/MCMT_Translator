@@ -2,6 +2,7 @@ package ControlFlow;
 
 import DataSchema.CaseVariableFactory;
 import DataSchema.ConjunctiveSelectQuery;
+import DataSchema.ConstantFactory;
 import DataSchema.InsertTransition;
 import DataSchema.SortFactory;
 import Exception.EevarOverflowException;
@@ -11,18 +12,21 @@ import Exception.UnmatchingSortException;
 public class ErrorBlock extends Block{
 
 	private ConjunctiveSelectQuery cond;
+	private Block handler;
 	
-	public ErrorBlock (String name) {
+	public ErrorBlock (String name, Block handler) {
 		this.name = name;
+		this.handler = handler;
 		this.sub_blocks = new Block[1];
-		this.life_cycle = CaseVariableFactory.getInstance().getCaseVariable("lifecycle" + name, SortFactory.getInstance().getSort("String_sort"), true);
+		this.life_cycle = CaseVariableFactory.getInstance().getCaseVariable("lifecycle_" + name, SortFactory.getInstance().getSort("String_sort"), true);
 	}
 	
-	public ErrorBlock (String name, ConjunctiveSelectQuery cond) {
+	public ErrorBlock (String name, Block handler, ConjunctiveSelectQuery cond) {
 		this.name = name;
+		this.handler = handler;
 		this.cond = cond;
-		this.sub_blocks = new Block[2];
-		this.life_cycle = CaseVariableFactory.getInstance().getCaseVariable("lifecycle" + name, SortFactory.getInstance().getSort("String_sort"), true);
+		this.sub_blocks = new Block[1];
+		this.life_cycle = CaseVariableFactory.getInstance().getCaseVariable("lifecycle_" + name, SortFactory.getInstance().getSort("String_sort"), true);
 	}
 	
 	public void addB1 (Block b1) {
@@ -45,36 +49,45 @@ public class ErrorBlock extends Block{
 		firstU.set(this.life_cycle, "Active");
 		firstU.set(this.sub_blocks[0].life_cycle, "Enabled");
 
-		// second part: B1 completed and cond TRUE --> B1 IDLE and B2 ENABLED 
+		// second part: B1 completed and cond TRUE --> B1 IDLE and itself COMPLETED 
 		ConjunctiveSelectQuery secondG = new ConjunctiveSelectQuery();
 		secondG.addBinaryCondition(true, this.sub_blocks[0].life_cycle, "Completed");
 		InsertTransition secondU = new InsertTransition(this.name + " second translation", secondG);
 		secondU.addTaskGuard(cond.getMCMT());
-		secondU.set(this.sub_blocks[1].life_cycle, "Enabled");
+		secondU.set(this.life_cycle, "Completed");
 		secondU.set(this.sub_blocks[0].life_cycle, "Idle");
 		
 
-		// third part: B2 completed --> B1 ENABLED and B2 IDLE
+		// third part: B1 completed and cond FALSE --> B1 idle, Handler error, sub_blocks of handler idle
 		ConjunctiveSelectQuery thirdG = new ConjunctiveSelectQuery();
-		thirdG.addBinaryCondition(true, this.sub_blocks[1].life_cycle, "Completed");
+		thirdG.addBinaryCondition(true, this.sub_blocks[0].life_cycle, "Completed");
 		InsertTransition thirdU = new InsertTransition(this.name + " third translation", thirdG);
-		thirdU.set(this.sub_blocks[1].life_cycle, "Idle");
-		thirdU.set(this.sub_blocks[0].life_cycle, "Enabled");
-		
-		// fourth part:  B1 completed and cond FALSE --> B1 IDLE and itself COMPLETED
-		ConjunctiveSelectQuery fourthG = new ConjunctiveSelectQuery();
-		fourthG.addBinaryCondition(true, this.sub_blocks[0].life_cycle, "Completed");
-		InsertTransition fourthU = new InsertTransition(this.name + " fourth translation", fourthG);
-		fourthU.addTaskGuard(cond.getNegated_mcmt());
-		fourthU.set(this.sub_blocks[0].life_cycle, "Idle");
-		fourthU.set(this.life_cycle, "Completed");
+		thirdU.addTaskGuard(cond.getNegated_mcmt());
+		start_propagation(handler, thirdU);		
 		
 		
 
 		// generate MCMT translation
-		result += firstU.generateMCMT() + "\n" + secondU.generateMCMT() + "\n" + thirdU.generateMCMT() + "\n"+ fourthU.generateMCMT() + "\n";
+		result += firstU.generateMCMT() + "\n" + secondU.generateMCMT() + "\n" + thirdU.generateMCMT() + "\n";
 
 		return result;
+		
+	}
+	
+	public void start_propagation(Block handler, InsertTransition transition) throws InvalidInputException, UnmatchingSortException {
+		transition.set(handler.life_cycle, ConstantFactory.getInstance().getConstant("Error" + handler.sub_blocks[0].name, SortFactory.getInstance().getSort("String_sort")).getName());
+		for (Block sub : handler.sub_blocks) 
+			propagateError(sub, transition);
+	}
+	
+	public void propagateError(Block current, InsertTransition transition) throws InvalidInputException, UnmatchingSortException {
+		if (current instanceof Task) {
+			transition.set(current.life_cycle, "Idle");
+			return;
+		}
+		transition.set(current.life_cycle, "Idle");
+		for (Block sub : current.sub_blocks) 
+			propagateError(sub, transition);
 		
 	}
 }

@@ -15,14 +15,14 @@ public class ProcessBlock extends Block{
 	public ProcessBlock (String name) {
 		this.name = name;
 		this.sub_blocks = new Block[1];
-		this.life_cycle = CaseVariableFactory.getInstance().getCaseVariable("lifecycle" + name, SortFactory.getInstance().getSort("String_sort"), true);
+		this.life_cycle = CaseVariableFactory.getInstance().getCaseVariable("lifecycle_" + name, SortFactory.getInstance().getSort("String_sort"), true);
 	}
 	
 	public ProcessBlock (String name, InsertTransition ins) {
 		this.name = name;
 		this.set_trans = ins;
 		this.sub_blocks = new Block[1];
-		this.life_cycle = CaseVariableFactory.getInstance().getCaseVariable("lifecycle" + name, SortFactory.getInstance().getSort("String_sort"), true);
+		this.life_cycle = CaseVariableFactory.getInstance().getCaseVariable("lifecycle_" + name, SortFactory.getInstance().getSort("String_sort"), true);
 	}
 	
 	public void addB1 (Block b1) {

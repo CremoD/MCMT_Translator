@@ -10,13 +10,12 @@ import Exception.EevarOverflowException;
 import Exception.InvalidInputException;
 import Exception.UnmatchingSortException;
 
-public class BackwardExceptionBlock extends Block{
-
+public class ForwardExceptionBlock extends Block{
 	private Constant error;
 	
-	public BackwardExceptionBlock (String name) {
+	public ForwardExceptionBlock (String name) {
 		this.name = name;
-		this.sub_blocks = new Block[2];
+		this.sub_blocks = new Block[3];
 		this.life_cycle = CaseVariableFactory.getInstance().getCaseVariable("lifecycle_" + name, SortFactory.getInstance().getSort("String_sort"), true);
 	}
 	
@@ -29,6 +28,10 @@ public class BackwardExceptionBlock extends Block{
 	
 	public void addB2 (Block b2) {
 		this.sub_blocks[1] = b2;
+	}
+	
+	public void addB3 (Block b3) {
+		this.sub_blocks[2] = b3;
 	}
 	
 	
@@ -44,41 +47,47 @@ public class BackwardExceptionBlock extends Block{
 		firstU.set(this.life_cycle, "Active");
 		firstU.set(this.sub_blocks[0].life_cycle, "Enabled");
 
-		// second part: B1 completed --> B1 IDLE and itself COMPLETED 
+		// second part: B1 completed --> B1 IDLE and B2 ENABLED 
 		ConjunctiveSelectQuery secondG = new ConjunctiveSelectQuery();
 		secondG.addBinaryCondition(true, this.sub_blocks[0].life_cycle, "Completed");
 		InsertTransition secondU = new InsertTransition(this.name + " second translation", secondG);
-		secondU.set(this.life_cycle, "Completed");
 		secondU.set(this.sub_blocks[0].life_cycle, "Idle");
+		secondU.set(this.sub_blocks[1].life_cycle, "Enabled");
 		
-
-		// third part: B1 error --> B1 IDLE and B2 ENABLED
+		// third part: B2 COMPLETED --> B2 IDLE and itself COMPLETED
 		ConjunctiveSelectQuery thirdG = new ConjunctiveSelectQuery();
-		thirdG.addBinaryCondition(true, this.sub_blocks[0].life_cycle, error.getName());
+		thirdG.addBinaryCondition(true, this.sub_blocks[1].life_cycle, "Completed");
 		InsertTransition thirdU = new InsertTransition(this.name + " third translation", thirdG);
-		thirdU.set(this.sub_blocks[0].life_cycle, "Idle");
-		thirdU.set(this.sub_blocks[1].life_cycle, "Enabled");
+		thirdU.set(this.life_cycle, "Completed");
+		thirdU.set(this.sub_blocks[1].life_cycle, "Idle");
 		
-		// fourth part:  B2 completed --> B1 enabled B2 idle
+		// fourth part: B1 error --> B1 IDLE and B3 ENABLED
 		ConjunctiveSelectQuery fourthG = new ConjunctiveSelectQuery();
-		fourthG.addBinaryCondition(true, this.sub_blocks[1].life_cycle, "Completed");
+		fourthG.addBinaryCondition(true, this.sub_blocks[0].life_cycle, this.error.getName());
 		InsertTransition fourthU = new InsertTransition(this.name + " fourth translation", fourthG);
-		fourthU.set(this.sub_blocks[1].life_cycle, "Idle");
-		fourthU.set(this.sub_blocks[0].life_cycle, "Enabled");
+		fourthU.set(this.sub_blocks[0].life_cycle, "Idle");
+		fourthU.set(this.sub_blocks[2].life_cycle, "Enabled");
 		
-		// fifth part, non deterministic error
+		// fifth part:  B3 completed --> B3 IDLE and itself COMPLETED
 		ConjunctiveSelectQuery fifthG = new ConjunctiveSelectQuery();
-		fifthG.addBinaryCondition(true, this.sub_blocks[0].life_cycle, "Enabled");
-		InsertTransition nondeterministicU = new InsertTransition(this.name + " fifth translation", fifthG);
+		fifthG.addBinaryCondition(true, this.sub_blocks[2].life_cycle, "Completed");
+		InsertTransition fifthU = new InsertTransition(this.name + " fifth translation", fifthG);
+		fifthU.set(this.sub_blocks[2].life_cycle, "Idle");
+		fifthU.set(this.life_cycle, "Completed");
+		
+		// sixth part, non deterministic error
+		ConjunctiveSelectQuery sixthG = new ConjunctiveSelectQuery();
+		sixthG.addBinaryCondition(true, this.sub_blocks[0].life_cycle, "Enabled");
+		InsertTransition nondeterministicU = new InsertTransition(this.name + " sixth translation", sixthG);
 		nondeterministicU.set(this.sub_blocks[0].life_cycle, this.error.getName());
 		start_propagation(this.sub_blocks[0], nondeterministicU);
 		
 		
 
 		// generate MCMT translation
-		result += firstU.generateMCMT() + "\n" + secondU.generateMCMT() + "\n" + thirdU.generateMCMT() + "\n"+ fourthU.generateMCMT() + "\n" + nondeterministicU.generateMCMT() + "\n";
+		result += firstU.generateMCMT() + "\n" + secondU.generateMCMT() + "\n" + thirdU.generateMCMT() + "\n"+ fourthU.generateMCMT() + "\n" + fifthU.generateMCMT() + "\n" + nondeterministicU.generateMCMT() + "\n";
 		nondeterministicU.setGuard("(= " + this.sub_blocks[0].life_cycle.getName() + " Active)");
-		nondeterministicU.setName(this.name + " sixth translation");
+		nondeterministicU.setName(this.name + " seventh translation");
 		result += nondeterministicU.generateMCMT() + "\n";
 
 

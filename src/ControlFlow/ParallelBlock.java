@@ -13,7 +13,7 @@ public class ParallelBlock extends Block{
 	public ParallelBlock (String name) {
 		this.name = name;
 		this.sub_blocks = new Block[2];
-		this.life_cycle = CaseVariableFactory.getInstance().getCaseVariable("lifecycle" + name, SortFactory.getInstance().getSort("String_sort"), true);
+		this.life_cycle = CaseVariableFactory.getInstance().getCaseVariable("lifecycle_" + name, SortFactory.getInstance().getSort("String_sort"), true);
 	}
 
 	public void addB1(Block b1) {

@@ -103,25 +103,41 @@ public class test {
 		Task t1 = new Task ("task1", it);
 		Task t2 = new Task ("task2", it2);
 		Task t3 = new Task("task3", upd);
+//		
+//		
+//		
+//		ForwardExceptionBlock exc = new ForwardExceptionBlock("exception");
+//		exc.addB1(t2);
+//		exc.addB2(t3);
+//		exc.addB3(t1);
+//		
+//		ProcessBlock b = new ProcessBlock("root_process");
+//		b.addB1(exc);
+//		
+//		
+//		
+//		
+//		
+//		MainProcess bigProcess = new MainProcess(b);
+		ForwardExceptionBlock exc = new ForwardExceptionBlock("exception");
 		
-		SequenceBlock seq = new SequenceBlock("sequence_block");
-		seq.addB1(t1);
-		seq.addB2(t2);
+
+		Event e1 = new Event ("app_received", it);
+		Event e2 = new Event ("stop");
 		
-		BackwardExceptionBlock exc = new BackwardExceptionBlock("exception");
-		exc.addB1(seq);
-		exc.addB2(t3);
+		ErrorEventBlock ee= new ErrorEventBlock("error_event", exc);
+		ee.addB1(e1);
+		ee.addB2(e2);
 		
-		ProcessBlock b = new ProcessBlock("root_process");
-		b.addB1(exc);
+		exc.addB1(t1);
+		exc.addB2(t2);
+		exc.addB3(ee);
 		
-		
-		
-		MainProcess bigProcess = new MainProcess(b);
+		System.out.println(ee.mcmt_translation());
 		
 		printDeclaration(relation_factory, sort_factory, cv_factory, constant_factory);
 		System.out.println(EevarManager.printEevar());
-		System.out.print(bigProcess.process_mcmt_generation());
+		//System.out.print(bigProcess.process_mcmt_generation());
 	
 		
 	}

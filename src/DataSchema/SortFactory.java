@@ -10,6 +10,7 @@ public class SortFactory {
 	// make the constructor private so that this class cannot be instantiated
 	private SortFactory() {
 		sorts = new HashMap<String, Sort>();
+		getSort("bool");
 	}
 	
 	// get the unique object
