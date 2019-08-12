@@ -11,6 +11,7 @@ public class SortFactory {
 	private SortFactory() {
 		sorts = new HashMap<String, Sort>();
 		getSort("bool");
+		getSort("int");
 	}
 	
 	// get the unique object

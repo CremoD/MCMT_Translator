@@ -13,12 +13,20 @@ public class ConstantFactory {
 		constant_list = new HashMap<String, Constant>();
 		SortFactory sort_factory = SortFactory.getInstance();
 		Sort string_sort = sort_factory.getSort("String_sort");
+		Sort bool = sort_factory.getSort("bool");
+
 		getConstant("Idle", string_sort);
 		getConstant("Enabled", string_sort);
 		getConstant("Active", string_sort);
 		getConstant("Completed", string_sort);
 		getConstant("Active1", string_sort);
 		getConstant("Active2", string_sort);
+		getConstant("True", bool);
+		getConstant("False", bool);
+		getConstant("Undef", string_sort);
+
+
+
 	}
 
 	// get the unique object
