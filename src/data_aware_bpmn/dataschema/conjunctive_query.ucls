@@ -29,26 +29,45 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </interface>  
-  <association id="4">    
-    <bendpoint x="411" y="283"/>    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="5" name="from_relations">        
-        <position height="19" width="85" x="990" y="372"/>      
-      </attribute>      
-      <multiplicity id="6" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="3" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
+  <package id="4" language="java" name="data_aware_bpmn.dataschema" project="MCMT_Translator" 
+    file="/MCMT_Translator/src/data_aware_bpmn/dataschema" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="928" y="176"/>    
+    <display autosize="true" stereotype="true" sort-features="false" accessors="true"/>  
+  </package>  
+  <package id="5" language="java" name="data_aware_bpmn.exception" project="MCMT_Translator" 
+    file="/MCMT_Translator/src/data_aware_bpmn/exception" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="52" width="216" x="1072" y="157"/>    
+    <display autosize="true" stereotype="true" sort-features="false" accessors="true"/>  
+  </package>  
+  <package id="6" language="java" name="data_aware_bpmn.controlflow" project="MCMT_Translator" 
+    file="/MCMT_Translator/src/data_aware_bpmn/controlflow" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="52" width="226" x="1328" y="157"/>    
+    <display autosize="true" stereotype="true" sort-features="false" accessors="true"/>  
+  </package>  
   <association id="7">    
     <bendpoint x="411" y="181"/>    
     <end type="SOURCE" refId="1" navigable="false">      
       <attribute id="8" name="selected_attributes">        
         <position height="19" width="109" x="814" y="450"/>      
       </attribute>      
-      <multiplicity id="9" minimum="0" maximum="2147483647"/>    
+      <multiplicity id="9" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
     </end>    
     <end type="TARGET" refId="2" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="10">    
+    <bendpoint x="411" y="283"/>    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="11" name="from_relations">        
+        <position height="19" width="85" x="990" y="372"/>      
+      </attribute>      
+      <multiplicity id="12" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="3" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 

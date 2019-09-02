@@ -188,6 +188,22 @@ public class ConjunctiveSelectQuery {
 		this.negated_mcmt = negated_mcmt;
 	}
 
+	public Attribute[] getSelected_attributes() {
+		return selected_attributes;
+	}
+
+	public void setSelected_attributes(Attribute[] selected_attributes) {
+		this.selected_attributes = selected_attributes;
+	}
+
+	public ArrayList<Relation> getFrom_relations() {
+		return from_relations;
+	}
+
+	public void setFrom_relations(ArrayList<Relation> from_relations) {
+		this.from_relations = from_relations;
+	}
+
 	// method that performs eevar association
 	public void addReferenceVariable(Attribute att) throws EevarOverflowException {
 		// 1 ) check in the reference manager

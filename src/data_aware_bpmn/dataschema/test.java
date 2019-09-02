@@ -212,11 +212,23 @@ public class test {
 		// BPMN specification
 		ConjunctiveSelectQuery prova = new ConjunctiveSelectQuery(job_category.getAttribute(0));
 		prova.addBinaryCondition(true, job_category.getAttribute(0), "HR");
-		System.out.println(prova.getQueryString());
 		
+		// example
+		Task decide_eligible = new Task ("decide_eligible", markE);
+		Task select_winner = new Task ("select_winner", sel_winner);
 
 		
+		SequenceBlock seq = new SequenceBlock("sequence_block");
+		seq.addB1(decide_eligible);
+		seq.addB2(select_winner);
 
+		ProcessBlock root = new ProcessBlock("root_process");
+		root.addB1(seq);
+		
+		MainProcess assign_job_process = new MainProcess(root);
+		printDeclaration(relation_factory, sort_factory, cv_factory, constant_factory);
+		System.out.println();
+		printInitialization(relation_factory, cv_factory);
 		
 
 		
@@ -237,6 +249,11 @@ public class test {
 		System.out.println(sf.printSortList());
 		System.out.println(rf.printFunctions());
 		System.out.println(c.printConstantList());
+
+	}
+	public static void printInitialization(RelationFactory rf,CaseVariableFactory cvf) {
+		System.out.print(rf.initialize() + " " + cvf.initialize());
+		
 
 	}
 	

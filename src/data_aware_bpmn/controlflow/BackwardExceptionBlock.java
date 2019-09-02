@@ -18,6 +18,7 @@ public class BackwardExceptionBlock extends Block{
 		this.name = name;
 		this.sub_blocks = new Block[2];
 		this.life_cycle = CaseVariableFactory.getInstance().getCaseVariable("lifecycle_" + name, SortFactory.getInstance().getSort("String_sort"), true);
+		this.life_cycle.setLifeCycle(1);
 	}
 	
 		

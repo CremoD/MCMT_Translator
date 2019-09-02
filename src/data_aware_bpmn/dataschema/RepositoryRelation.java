@@ -82,5 +82,16 @@ public class RepositoryRelation implements Relation{
 		return result;
 	}
 	
+	public String initialize() {
+		String result = "";
+		int attr_num = 1;
+		
+		for (Attribute attr : attributes) {
+			result += "(= " + this.name + attr_num + "[x] NULL_" + attr.getSort().getName() + ") ";
+			attr_num++;
+		}
+		
+		return result;
+	}
 
 }

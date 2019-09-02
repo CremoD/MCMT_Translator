@@ -38,4 +38,21 @@ public class CaseVariableFactory {
 		}
 		return result;
 	}
+	
+	public String initialize() {
+		String result = "";
+		for (CaseVariable value : casevariable_list.values()) {
+			if(value.getLifeCycle() == 2)
+				result += "(= " + value.getName() + " Enabled) ";
+			else if (value.getLifeCycle() == 1)
+				result += "(= " + value.getName() + " Idle) ";
+			else {
+				if (value.getSort().getName().equals("bool"))
+					result += "(= " + value.getName() + " false) ";
+				else
+					result += "(= " + value.getName() + " NULL_" + value.getSort().getName()+") ";
+			}
+		}
+		return result;
+	}
 }

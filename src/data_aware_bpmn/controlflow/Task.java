@@ -13,6 +13,7 @@ public class Task extends Block{
 		this.name = name;
 		this.sub_blocks = new Block[0];
 		this.life_cycle = CaseVariableFactory.getInstance().getCaseVariable("lifecycle_" + name, SortFactory.getInstance().getSort("String_sort"), true);
+		this.life_cycle.setLifeCycle(1);
 	}
 	
 	public Task (String name, Transition eff) {
@@ -20,6 +21,7 @@ public class Task extends Block{
 		this.effect = eff;
 		this.sub_blocks = new Block[0];
 		this.life_cycle = CaseVariableFactory.getInstance().getCaseVariable("lifecycle_" + name, SortFactory.getInstance().getSort("String_sort"), true);
+		this.life_cycle.setLifeCycle(1);
 	}
 	
 	public void addTransition (Transition eff) {

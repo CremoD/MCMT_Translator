@@ -16,6 +16,7 @@ public class ProcessBlock extends Block{
 		this.name = name;
 		this.sub_blocks = new Block[1];
 		this.life_cycle = CaseVariableFactory.getInstance().getCaseVariable("lifecycle_" + name, SortFactory.getInstance().getSort("String_sort"), true);
+		this.life_cycle.setLifeCycle(1);
 	}
 	
 	public ProcessBlock (String name, InsertTransition ins) {
@@ -32,8 +33,6 @@ public class ProcessBlock extends Block{
 	public void setEventTransition(InsertTransition ins) {
 		this.set_trans = ins;
 	}
-	
-	
 	
 	@Override
 	public String mcmt_translation() throws InvalidInputException, UnmatchingSortException, EevarOverflowException {

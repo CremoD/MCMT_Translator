@@ -6,12 +6,16 @@ public class CaseVariable {
 	private String name;
 	private Sort sort;
 	private boolean one_case;
+	// 0 stands for normal case variable, 1 for lifecycle variable, 2 for lifecycle of the root process block.
+	// this distinction is necessary for initialization
+	private int lifecycle; 
 	
 	// constructor
 	public CaseVariable (String name, Sort sort, boolean one_case) {
 		this.name = name;
 		this.sort = sort;
 		this.one_case = one_case;
+		this.lifecycle = 0;
 	}
 
 	//getters and setters
@@ -37,6 +41,13 @@ public class CaseVariable {
 
 	public void setOne_case(boolean one_case) {
 		this.one_case = one_case;
+	}
+
+	public int getLifeCycle() {
+		return this.lifecycle;
+	}
+	public void setLifeCycle (int value) {
+		this.lifecycle = value;
 	}
 
 	

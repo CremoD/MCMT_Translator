@@ -19,6 +19,7 @@ public class ErrorBlock extends Block{
 		this.handler = handler;
 		this.sub_blocks = new Block[1];
 		this.life_cycle = CaseVariableFactory.getInstance().getCaseVariable("lifecycle_" + name, SortFactory.getInstance().getSort("String_sort"), true);
+		this.life_cycle.setLifeCycle(1);
 	}
 	
 	public ErrorBlock (String name, Block handler, ConjunctiveSelectQuery cond) {

@@ -10,6 +10,7 @@ public class MainProcess {
 	
 	public MainProcess (ProcessBlock process_block) {
 		this.root = process_block;
+		this.root.life_cycle.setLifeCycle(2);
 	}
 
 	public ProcessBlock getRoot() {

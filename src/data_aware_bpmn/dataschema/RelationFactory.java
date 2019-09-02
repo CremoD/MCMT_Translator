@@ -76,5 +76,13 @@ public class RelationFactory {
 		return result;
 	}
 	
+	public String initialize() {
+		String result = "";
+		for (RepositoryRelation value : repository.values()) {
+		    result += value.initialize(); 
+		}
+		return result;
+	}
+	
 	
 }

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<class-diagram version="1.2.3" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
+  associations="true" dependencies="false" nesting-relationships="true" router="FAN">  
+  <class id="1" language="java" name="data_aware_bpmn.dataschema.InsertTransition" project="MCMT_Translator" 
+    file="/MCMT_Translator/src/data_aware_bpmn/dataschema/InsertTransition.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="132" width="374" x="457" y="187"/>    
+    <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="2" language="java" name="data_aware_bpmn.dataschema.BulkCondition" project="MCMT_Translator" 
+    file="/MCMT_Translator/src/data_aware_bpmn/dataschema/BulkCondition.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="226" y="548"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="3" language="java" name="data_aware_bpmn.dataschema.BulkUpdate" project="MCMT_Translator" 
+    file="/MCMT_Translator/src/data_aware_bpmn/dataschema/BulkUpdate.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="132" width="375" x="456" y="516"/>    
+    <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="4" language="java" name="data_aware_bpmn.dataschema.ConjunctiveSelectQuery" project="MCMT_Translator" 
+    file="/MCMT_Translator/src/data_aware_bpmn/dataschema/ConjunctiveSelectQuery.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1021" y="418"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="5" language="java" name="data_aware_bpmn.dataschema.DeleteTransition" project="MCMT_Translator" 
+    file="/MCMT_Translator/src/data_aware_bpmn/dataschema/DeleteTransition.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="132" width="376" x="456" y="351"/>    
+    <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="6" language="java" name="data_aware_bpmn.dataschema.Sort" project="MCMT_Translator" 
+    file="/MCMT_Translator/src/data_aware_bpmn/dataschema/Sort.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1001" y="932"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <association id="7">    
+    <end type="SOURCE" refId="5" navigable="false">      
+      <attribute id="8" name="precondition">        
+        <position height="19" width="74" x="1083" y="840"/>      
+      </attribute>      
+      <multiplicity id="9" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="4" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="10">    
+    <bendpoint x="1021" y="253"/>    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="11" name="precondition">        
+        <position height="19" width="74" x="1167" y="889"/>      
+      </attribute>      
+      <multiplicity id="12" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="4" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="13">    
+    <bendpoint x="391" y="581"/>    
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="14" name="root">        
+        <position height="19" width="32" x="977" y="871"/>      
+      </attribute>      
+      <multiplicity id="15" minimum="0" maximum="1">        
+        <position height="17" width="26" x="390" y="585"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="2" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="16">    
+    <bendpoint x="1021" y="582"/>    
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="17" name="precondition">        
+        <position height="19" width="74" x="1163" y="835"/>      
+      </attribute>      
+      <multiplicity id="18" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="4" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+    sort-features="false" accessors="true" visibility="true">    
+    <attributes public="true" package="true" protected="true" private="true" static="true"/>    
+    <operations public="true" package="true" protected="true" private="true" static="true"/>  
+  </classifier-display>  
+  <association-display labels="true" multiplicity="true"/>
+</class-diagram>
