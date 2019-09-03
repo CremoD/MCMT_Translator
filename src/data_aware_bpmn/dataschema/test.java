@@ -226,10 +226,13 @@ public class test {
 		root.addB1(seq);
 		
 		MainProcess assign_job_process = new MainProcess(root);
-		printDeclaration(relation_factory, sort_factory, cv_factory, constant_factory);
-		System.out.println();
-		printInitialization(relation_factory, cv_factory);
+	
+		ConjunctiveSelectQuery safety_property = new ConjunctiveSelectQuery();
+		safety_property.addBinaryCondition(true, root.life_cycle, "Enabled");
+		safety_property.addBinaryCondition(true, winner, "Undef");
+		assign_job_process.setSafety_formula(safety_property);
 		
+		assign_job_process.generateMCMT();
 
 		
 
@@ -240,19 +243,19 @@ public class test {
 	}
 	
 	
-	public static void printDeclaration(RelationFactory rf, SortFactory sf, CaseVariableFactory cvf, ConstantFactory c) {
-		System.out.println(sf.printSort());
-		System.out.println(c.printConstants());
-		System.out.println(rf.printCatalog());
-		System.out.println(rf.printRepository());
-		System.out.println(cvf.printCaseVariables());
-		System.out.println(sf.printSortList());
-		System.out.println(rf.printFunctions());
-		System.out.println(c.printConstantList());
+	public static void printDeclaration() {
+		System.out.println(SortFactory.getInstance().printSort());
+		System.out.println(ConstantFactory.getInstance().printConstants());
+		System.out.println(RelationFactory.getInstance().printCatalog());
+		System.out.println(RelationFactory.getInstance().printRepository());
+		System.out.println(CaseVariableFactory.getInstance().printCaseVariables());
+		System.out.println(SortFactory.getInstance().printSortList());
+		System.out.println(RelationFactory.getInstance().printFunctions());
+		System.out.println(ConstantFactory.getInstance().printConstantList());
 
 	}
-	public static void printInitialization(RelationFactory rf,CaseVariableFactory cvf) {
-		System.out.print(rf.initialize() + " " + cvf.initialize());
+	public static void printInitialization() {
+		System.out.print(RelationFactory.getInstance().initialize() + " " + CaseVariableFactory.getInstance().initialize());
 		
 
 	}

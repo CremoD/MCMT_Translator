@@ -1,0 +1,237 @@
+:smt(define--type Num_score)
+:smt(define--type bool)
+:smt(define--type jobcatID)
+:smt(define--type userID)
+:smt(define--type int)
+:smt(define--type String_sort)
+:smt(define--type Num_age)
+
+:smt(define user_f1::(->userID String_sort))
+:smt(define user_f2::(->userID Num_age))
+
+:smt (define Active ::String_sort)
+:smt (define Active1 ::String_sort)
+:smt (define Active2 ::String_sort)
+:smt (define Idle ::String_sort)
+:smt (define Completed ::String_sort)
+:smt (define Enabled ::String_sort)
+:smt (define True ::bool)
+:smt (define False ::bool)
+:smt (define Undef ::String_sort)
+
+:db_sorts Num_score bool jobcatID userID int String_sort Num_age 
+:db_functions user_f1 user_f2 
+:db_constants Active Active1 Active2 Idle Completed Enabled True False Undef 
+
+:local Application1 jobcatID
+:local Application2 userID
+:local Application3 Num_score
+:local Application4 bool
+
+:global result bool
+:global uid userID
+:global lifecycle_decide_eligible String_sort
+:global lifecycle_root_process String_sort
+:global winner userID
+:global jcid jobcatID
+:global lifecycle_select_winner String_sort
+:global lifecycle_sequence_block String_sort
+:global qualif bool
+
+:initial
+:var x
+:cnj (= Application1[x] NULL_jobcatID) (= Application2[x] NULL_userID) (= Application3[x] NULL_Num_score) (= Application4[x] NULL_bool)  (= result false) (= uid NULL_userID) (= lifecycle_decide_eligible Idle) (= lifecycle_root_process Enabled) (= winner NULL_userID) (= jcid NULL_jobcatID) (= lifecycle_select_winner Idle) (= lifecycle_sequence_block Idle) (= qualif false) 
+
+:u_cnj (= lifecycle_root_process Enabled) (= winner Undef) 
+
+:eevar E2 userID
+:eevar E1 jobcatID
+:eevar E3 Num_score
+:eevar E4 bool
+
+:comment root_process first translation
+:transition
+:var j
+:guard (= lifecycle_root_process Enabled) 
+:numcases 1
+:case
+:val Application1[j]
+:val Application2[j]
+:val Application3[j]
+:val Application4[j]
+
+:val result
+:val uid
+:val lifecycle_decide_eligible
+:val Active
+:val winner
+:val jcid
+:val lifecycle_select_winner
+:val Enabled
+:val qualif
+
+
+:comment root_process second translation
+:transition
+:var j
+:guard (= lifecycle_sequence_block Completed) 
+:numcases 1
+:case
+:val Application1[j]
+:val Application2[j]
+:val Application3[j]
+:val Application4[j]
+
+:val result
+:val uid
+:val lifecycle_decide_eligible
+:val Completed
+:val winner
+:val jcid
+:val lifecycle_select_winner
+:val Idle
+:val qualif
+
+
+:comment sequence_block first translation
+:transition
+:var j
+:guard (= lifecycle_sequence_block Enabled) 
+:numcases 1
+:case
+:val Application1[j]
+:val Application2[j]
+:val Application3[j]
+:val Application4[j]
+
+:val result
+:val uid
+:val Enabled
+:val lifecycle_root_process
+:val winner
+:val jcid
+:val lifecycle_select_winner
+:val Active
+:val qualif
+
+
+:comment sequence_block second translation
+:transition
+:var j
+:guard (= lifecycle_decide_eligible Completed) 
+:numcases 1
+:case
+:val Application1[j]
+:val Application2[j]
+:val Application3[j]
+:val Application4[j]
+
+:val result
+:val uid
+:val Idle
+:val lifecycle_root_process
+:val winner
+:val jcid
+:val Enabled
+:val lifecycle_sequence_block
+:val qualif
+
+
+:comment sequence_block third translation
+:transition
+:var j
+:guard (= lifecycle_select_winner Completed) 
+:numcases 1
+:case
+:val Application1[j]
+:val Application2[j]
+:val Application3[j]
+:val Application4[j]
+
+:val result
+:val uid
+:val lifecycle_decide_eligible
+:val lifecycle_root_process
+:val winner
+:val jcid
+:val Idle
+:val Completed
+:val qualif
+
+
+:comment MarkE
+:transition
+:var j
+:guard (= lifecycle_decide_eligible Enabled)
+:numcases 2
+:case (> Application3[j] 80)
+:val Application1[j]
+:val Application2[j]
+:val Application3[j]
+:val True
+
+:val result
+:val uid
+:val Completed
+:val lifecycle_root_process
+:val winner
+:val jcid
+:val lifecycle_select_winner
+:val lifecycle_sequence_block
+:val qualif
+
+:case (not (> Application3[j] 80))
+:val Application1[j]
+:val Application2[j]
+:val Application3[j]
+:val False
+
+:val result
+:val uid
+:val Completed
+:val lifecycle_root_process
+:val winner
+:val jcid
+:val lifecycle_select_winner
+:val lifecycle_sequence_block
+:val qualif
+
+:comment Insert_User
+:transition
+:var j
+:var x
+:var y
+:guard (= Application1[x] E1) (= Application2[x] E2) (= Application3[x] E3) (= Application4[x] E4) (= E4 True) (= Application1[y] E1) (= Application2[y] E2) (= Application3[y] E3) (= Application4[y] E4) (= lifecycle_select_winner Enabled)
+:numcases 2
+:case (= j y)
+:val null
+:val null
+:val null
+:val null
+
+:val E4
+:val E2
+:val lifecycle_decide_eligible
+:val lifecycle_root_process
+:val E2
+:val E1
+:val Completed
+:val lifecycle_sequence_block
+:val False
+
+:case
+:val Application1[j]
+:val Application2[j]
+:val Application3[j]
+:val Application4[j]
+
+:val E4
+:val E2
+:val lifecycle_decide_eligible
+:val lifecycle_root_process
+:val E2
+:val E1
+:val Completed
+:val lifecycle_sequence_block
+:val False
+
