@@ -8,6 +8,13 @@ import java.util.HashMap;
 import data_aware_bpmn.exception.InvalidInputException;
 import data_aware_bpmn.exception.UnmatchingSortException;
 
+/**
+ * Class representing the node of the bulk update tree, implementing the tree structure of the conditional update of DABs.
+ * Each Node is either an inner node, if it is characterized by a condition, or a leaf node, if it is characterized by a set rule.
+ * Each condition added will have impact on the cases of the MCMT transitions.
+ * @author DavideCremonini
+ *
+ */
 public class BulkCondition {
 	
 	private RepositoryRelation relationToUpdate;
@@ -20,7 +27,10 @@ public class BulkCondition {
 	private HashMap<String, String> eevar_association;
 	private HashMap<String, String> set_table;
 
-	
+	/**
+	 * Constructor of the Bulk condition
+	 * @param relationToUpdate indicates the relation subject of the update effect 
+	 */
 	public BulkCondition (RepositoryRelation relationToUpdate) throws InvalidInputException {
 		this.relationToUpdate = relationToUpdate;
 		this.set_table = new HashMap<String, String>();
@@ -28,7 +38,12 @@ public class BulkCondition {
 
 	}
 	
-	// check attribute is of the relationToUpdate relation and return corresponding name
+	/**
+	 * Method that check if the attribute passed as parameter is of the relation to update and return corresponding name.
+	 * @param att attribute to be checked
+	 * @return changed name of the attribute to refer to MCMT local array variable
+	 * @throws InvalidInputException if the attribute does not refer to correct repository relation to update
+	 */
 	public String check_return_Attribute (Attribute att) throws InvalidInputException {
 		if (!(att.getIn_relation() instanceof RepositoryRelation) || !((RepositoryRelation)att.getIn_relation() == this.relationToUpdate))
 			throw new InvalidInputException ("Attribute " + att.getName() + " should refer to correct Repository relation: " + relationToUpdate.getName());
@@ -43,22 +58,42 @@ public class BulkCondition {
 		return result;
 	}
 	
-	// methods for building the condition. 4 types, greater, smaller, equal, in catalog relation
+	/**
+	 * Method for building the greater condition between attribute and another object
+	 * @param att attribute of the relation to update to insert in the condition
+	 * @param second object to insert in the condition
+	 */
 	public void addGreaterCondition (Attribute att, Object second) throws InvalidInputException {
 		condition += " (> " + check_return_Attribute(att) + " " + second + ")";
 		this.false_list.add(" (not (> " + check_return_Attribute(att) + " " + second + "))");
 	}
 	
+	/**
+	 * Method for building the smaller condition between attribute and another object
+	 * @param att attribute of the relation to update to insert in the condition
+	 * @param second object to insert in the condition
+	 */
 	public void addSmallerCondition (Attribute att, Object second) throws InvalidInputException {
 		condition += " (< " + check_return_Attribute(att) + " " + second + ")";
 		this.false_list.add(" (not (< " + check_return_Attribute(att) + " " + second + "))");
 	}
 	
+	/**
+	 * Method for building the equality condition between attribute and another object
+	 * @param att attribute of the relation to update to insert in the condition
+	 * @param second object to insert in the condition
+	 */
 	public void addEqualCondition (Attribute att, Object second) throws InvalidInputException {
 		condition += " (= " + check_return_Attribute(att) + " " + second + ")";
 		this.false_list.add(" (not (= " + check_return_Attribute(att) + " " + second + "))");
 	}
 	
+	/**
+	 * Method for building the condition for which a tuple of attributes is in a particular catalog relation
+	 * @param cat catalog relation considered
+	 * @param attributes array of attributes to check in the condition
+	 * @throws InvalidInputException if there is no marching between arity of relation and number of values
+	 */
 	public void addInRelationCondition (CatalogRelation cat, Attribute...attributes) throws InvalidInputException {
 		// first control arity
 		if (cat.arity() != attributes.length) {
@@ -79,7 +114,10 @@ public class BulkCondition {
 		}
 	}
 	
-	
+	/**
+	 * Method that adds the true Child in the tree of Bulk Update
+	 * @return new added true child
+	 */
 	public BulkCondition addTrueChild () throws InvalidInputException {
 		BulkCondition new_condition = new BulkCondition(relationToUpdate);
 		new_condition.setEevar_association(eevar_association);
@@ -87,6 +125,10 @@ public class BulkCondition {
 		return new_condition;
 	}
 	
+	/**
+	 * Method that adds the false Child in the tree of Bulk Update
+	 * @return new added false child
+	 */
 	public BulkCondition addFalseChild () throws InvalidInputException {
 		BulkCondition new_condition = new BulkCondition(relationToUpdate);
 		new_condition.setEevar_association(eevar_association);
@@ -94,10 +136,16 @@ public class BulkCondition {
 		return new_condition;
 	}
 	
+	/**
+	 * Method that characterizes a leaf of the tree. Set attribute of the repository relation to update to new values
+	 * @param att attribute to be set
+	 * @param new_value to set to attribute
+	 * @throws InvalidInputException if attribute to be set is not an attribute of the considered relation to update or is already set
+	 */
 	public void set(Attribute att, String new_value) throws InvalidInputException, UnmatchingSortException {
 		// control att is of the updated repository relation
 		if (((RepositoryRelation)att.getIn_relation()) != relationToUpdate) {
-			throw new InvalidInputException("Attribute to set is not an attributed of the considered relation " + relationToUpdate.getName());
+			throw new InvalidInputException("Attribute to set is not an attribute of the considered relation " + relationToUpdate.getName());
 		}
 		// control of eevar or constant new_value
 		boolean eevar = isEevar(new_value);
@@ -112,7 +160,10 @@ public class BulkCondition {
 		this.isLeaf = true;
 	}
 	
-	// method for getting the correct mcmt declaration of local update
+	/**
+	 * Method for getting the correct mcmt translation of local update
+	 * @return String representing the mcmt translation
+	 */
 	public String getLocalUpdate() throws InvalidInputException {
 		String result="";
 		// iterate through the repository relation factory and found the considered relation
@@ -143,7 +194,13 @@ public class BulkCondition {
 	
 	
 	
-	// prova, check for matching method
+	/**
+	 * Method that checks for matching sorts
+	 * @param eevar boolean value that indicates whether the situation is applied to eevar variable
+	 * @param first Sort to be checked
+	 * @param second Name of the second object to check 
+	 * @throws UnmatchingSortException if there is no matching between sorts
+	 */
 	public void checkSorts(boolean eevar, Sort first, String second) throws UnmatchingSortException {
 		if (eevar && !first.getName().equals(EevarManager.getSortByVariable(eevar_association.get(second)).getName())) {
 			throw new UnmatchingSortException("No matching between sorts: " + first.getName() + " VS "
@@ -155,6 +212,12 @@ public class BulkCondition {
 		}
 	}
 
+	/**
+	 * Method that checks whether the value of the String passed as parameter is an answer variable, i.e., eevar, or a constant.
+	 * @param value to be checked
+	 * @return boolean result, indicating true if the value is an eevar or false if it is a constant
+	 * @throws InvalidInputException if the String value passed as parameter is neither an eevar nor a constant
+	 */
 	public boolean isEevar(String value) throws InvalidInputException {
 		if (!eevar_association.containsKey(value)) {
 			if (!ConstantFactory.constant_list.containsKey(value)) {
@@ -166,59 +229,114 @@ public class BulkCondition {
 	}
 	
 	
-	// getters and setters
+	/**
+	 * Method for getting the condition 
+	 * @return string representing condition
+	 */
 	public String getCondition () {
 		return this.condition;
 	}
-
-	public RepositoryRelation getRelationToUpdate() {
-		return relationToUpdate;
-	}
-
-	public void setRelationToUpdate(RepositoryRelation relationToUpdate) {
-		this.relationToUpdate = relationToUpdate;
-	}
-
-	public String getNegated_condition() {
-		return negated_condition;
-	}
-
-	public void setNegated_condition(String negated_condition) {
-		this.negated_condition = negated_condition;
-	}
-
-	public boolean isLeaf() {
-		return isLeaf;
-	}
-
-	public void setLeaf(boolean isLeaf) {
-		this.isLeaf = isLeaf;
-	}
-
-	public HashMap<String, String> getEevar_association() {
-		return eevar_association;
-	}
-
-	public void setEevar_association(HashMap<String, String> eevar_association) {
-		this.eevar_association = eevar_association;
-	}
-
+	
+	/**
+	 * Method for setting the condition
+	 * @param condition value of condition to be set
+	 */
 	public void setCondition(String condition) {
 		this.condition = condition;
 	}
 
+	/**
+	 * Method for getting the relation to update
+	 * @return condition to update
+	 */
+	public RepositoryRelation getRelationToUpdate() {
+		return relationToUpdate;
+	}
+
+	/**
+	 * Method for setting the relation to update
+	 * @param relationToUpdate value of relation to be set
+	 */
+	public void setRelationToUpdate(RepositoryRelation relationToUpdate) {
+		this.relationToUpdate = relationToUpdate;
+	}
+
+	/**
+	 * Method for getting the negated condition 
+	 * @return string representing negated condition
+	 */
+	public String getNegated_condition() {
+		return negated_condition;
+	}
+	
+	/**
+	 * Method for setting the negated condition
+	 * @param negated_condition value of negated condition to be set
+	 */
+	public void setNegated_condition(String negated_condition) {
+		this.negated_condition = negated_condition;
+	}
+
+	/**
+	 * Method for checking if the object is a leaf or not
+	 * @return
+	 */
+	public boolean isLeaf() {
+		return isLeaf;
+	}
+
+	/**
+	 * Method for setting the boolean variable indicated whether BulkCondition is a leaf or inner node
+	 * @param isLeaf boolean value to be set
+	 */
+	public void setLeaf(boolean isLeaf) {
+		this.isLeaf = isLeaf;
+	}
+
+	/**
+	 * Method for getting HashMap representing the eevar association 
+	 * @return HashMap representing eevar association
+	 */
+	public HashMap<String, String> getEevar_association() {
+		return eevar_association;
+	}
+
+	/**
+	 * Method for setting the eevar associaton HashMap
+	 * @param eevar_association HashMap to be set
+	 */
+	public void setEevar_association(HashMap<String, String> eevar_association) {
+		this.eevar_association = eevar_association;
+	}
+
+	/**
+	 * Method for getting HashMap representing the set table
+	 * @return HashMap representing set table
+	 */
 	public HashMap<String, String> getSet_table() {
 		return set_table;
 	}
 
+	/**
+	 * Method for setting the set table
+	 * @param set_table to be set
+	 */
 	public void setSet_table(HashMap<String, String> set_table) {
 		this.set_table = set_table;
 	}
 
+	/**
+	 * Method for getting ArrayList representing the list of false conditions
+	 * @return ArrayList representing list of false conditions
+	 */
 	public ArrayList<String> getFalse_list() {
 		return false_list;
 	}
 
+	/**
+	 * Method for setting the list of false conditions
+	 * @param false_list to be set
+	 */
 	public void setFalse_list(ArrayList<String> false_list) {
 		this.false_list = false_list;
 	}

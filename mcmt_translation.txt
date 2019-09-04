@@ -196,7 +196,7 @@
 :val lifecycle_sequence_block
 :val qualif
 
-:comment Insert_User
+:comment Sel_Winner
 :transition
 :var j
 :var x

@@ -201,7 +201,7 @@ public class test {
 		
 		ConjunctiveSelectQuery sel_winner_guard = new ConjunctiveSelectQuery(application.getAttribute(0), application.getAttribute(1),application.getAttribute(2),application.getAttribute(3));
 		sel_winner_guard.addBinaryCondition(true, application.getAttribute(3), "True");
-		DeleteTransition sel_winner = new DeleteTransition("Insert_User", sel_winner_guard);
+		DeleteTransition sel_winner = new DeleteTransition("Sel_Winner", sel_winner_guard);
 		sel_winner.delete(application, "jcid_app", "uid_app", "score", "eligible");
 		sel_winner.set(jcid, "jcid_app");
 		sel_winner.set(uid, "uid_app");
@@ -241,24 +241,4 @@ public class test {
 
 		
 	}
-	
-	
-	public static void printDeclaration() {
-		System.out.println(SortFactory.getInstance().printSort());
-		System.out.println(ConstantFactory.getInstance().printConstants());
-		System.out.println(RelationFactory.getInstance().printCatalog());
-		System.out.println(RelationFactory.getInstance().printRepository());
-		System.out.println(CaseVariableFactory.getInstance().printCaseVariables());
-		System.out.println(SortFactory.getInstance().printSortList());
-		System.out.println(RelationFactory.getInstance().printFunctions());
-		System.out.println(ConstantFactory.getInstance().printConstantList());
-
-	}
-	public static void printInitialization() {
-		System.out.print(RelationFactory.getInstance().initialize() + " " + CaseVariableFactory.getInstance().initialize());
-		
-
-	}
-	
-
 }
