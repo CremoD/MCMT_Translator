@@ -10,6 +10,12 @@ import com.healthmarketscience.sqlbuilder.dbspec.basic.DbTable;
 
 import data_aware_bpmn.exception.EevarOverflowException;
 
+/**
+ * Class responsible for create a conjunctive query, using the SQL builder library and in parallel taking trace of
+ * the MCMT translation of the conjunctive query to build the guard of a transition, condition of blocks or safety property
+ * @author DavideCremonini
+ *
+ */
 public class ConjunctiveSelectQuery {
 	
 	private SelectQuery select_query;
@@ -21,7 +27,11 @@ public class ConjunctiveSelectQuery {
 	private Attribute [] selected_attributes;
 	private ArrayList <Relation> from_relations;
 
-	// constructor
+	/**
+	 * Constructor of the class. The attributes representing the selected part of the query are analyzed to adjust
+	 * the eevar management (eevars are added if the attribute is primary key or attribute of catalog relation)
+	 * @param attributes attributes that represent the select part of the query, i.e., answer variables
+	 */
 	public ConjunctiveSelectQuery(Attribute...attributes) throws EevarOverflowException {
 		this.selected_attributes = attributes;
 		this.from_relations = new ArrayList<Relation>();
@@ -50,7 +60,12 @@ public class ConjunctiveSelectQuery {
 		}
 	}
 	
-	// add condition method
+	/**
+	 * Method for adding a binary condition.
+	 * @param equal indicates if the condition is of equality or inequality
+	 * @param first object of the condition
+	 * @param second object of the condition
+	 */
 	public void addBinaryCondition(boolean equal, Object first, Object second) {
 		
 		String first_mcmt = first + "";
@@ -93,7 +108,10 @@ public class ConjunctiveSelectQuery {
 	}
 	
 	
-	// add relation in from clause
+	/**
+	 * Method for adding a relation in the FROM part of the conjunctive select query
+	 * @param r relation to add in the FROM parto of the conjunctive select query
+	 */
 	public void addFrom(Relation r) throws EevarOverflowException {
 		if (r instanceof CatalogRelation) {
 			
@@ -105,7 +123,10 @@ public class ConjunctiveSelectQuery {
 
 	}
 	
-	// add from catalog relation
+	/**
+	 * Method for adding a catalog relation in the FROM part of the conjunctive select query
+	 * @param rel catalog relation to add in the FROM part of the conjunctive select query
+	 */
 	public void addFrom(CatalogRelation rel) throws EevarOverflowException {
 		DbTable table = rel.getDbTable();
 
@@ -121,7 +142,10 @@ public class ConjunctiveSelectQuery {
 
 	}
 	
-	// add from tables
+	/**
+	 * Method for adding a repository relation in the FROM part of the conjunctive select query
+	 * @param rel repository relation to add in the FROM part of the conjunctive select query
+	 */
 	public void addFrom(RepositoryRelation rel) throws EevarOverflowException {
 		DbTable table = rel.getDbTable();
 
@@ -138,49 +162,98 @@ public class ConjunctiveSelectQuery {
 		}
 	}
 	
-	// getQuery
+	/**
+	 * Method for getting the validation of the String representing the SQL conjunctive select query
+	 * @return String representing the SQL conjunctive select query validated 
+	 */
 	public String getQueryString() {
 		return this.select_query.validate().toString();
 	}
 
-//	// getters and setters
+	/**
+	 * Method for getting the String representing the SQL conjunctive select query
+	 * @return String representing the SQL conjunctive select query
+	 */
 	public SelectQuery getSelect_query() {
 		return select_query;
 	}
 
+	/**
+	 * Method for setting the String representing the SQL conjunctive select query
+	 * @param select_query the String representing the SQL conjunctive select query to be set
+	 */
 	public void setSelect_query(SelectQuery select_query) {
 		this.select_query = select_query;
 	}
 	
+	/**
+	 * Method for getting the HashMap that contains the table/relations in the FROM part of the query
+	 * @return HashMap that contains the table/relations in the FROM part of the query
+	 */
 	public HashMap<String, DbTable> getTables() {
 		return tables;
 	}
 
+	/**
+	 * Method for setting the HashMap that contains the table/relations in the FROM part of the query
+	 * @param tables HashMap that contains the table/relations in the FROM part of the query
+	 */
 	public void setTables(HashMap<String, DbTable> tables) {
 		this.tables = tables;
 	}
 
+	/**
+	 * Method for setting the MCMT translation of the conjunctive select query, i.e., a conjunction of equalities/inequalities
+	 * @param mcmt the MCMT translation of the conjunctive select query, i.e., a conjunction of equalities/inequalities to be set
+	 */
 	public void setMCTM(String mcmt) {
 		this.mcmt = mcmt;
 	}
 	
+	/**
+	 * Method for getting the MCMT translation of the conjunctive select query, i.e., a conjunction of equalities/inequalities
+	 * @return mcmt the MCMT translation of the conjunctive select query, i.e., a conjunction of equalities/inequalities
+	 */
 	public String getMCMT() {
 		return this.mcmt;
 	}
 	
+	/**
+	 * Method that controls if there is an index present in the query
+	 * @return true if index is present, false otherwise
+	 */
 	public boolean isIndex_present() {
 		return index_present;
 	}
 
+	/** 
+	 * Method for setting the value of variables that indicates whether an index is present or not
+	 * @param index_present value of variables that indicates whether an index is present or not to be set
+	 */
 	public void setIndex_present(boolean index_present) {
 		this.index_present = index_present;
 	}
+	
+	/**
+	 * Method for getting the HashMap that takes information about eevar associations
+	 * @return HashMap that takes information about eevar associations
+	 */
 	public HashMap<String, String> getRef_manager() {
 		return ref_manager;
 	}
+	
+	/**
+	 * Method for setting the HashMap that takes information about eevar associations
+	 * @param ref_manager HashMap that takes information about eevar associations to be set
+	 */
 	public void setRef_manager(HashMap<String, String> ref_manager) {
 		this.ref_manager = ref_manager;
 	}
+	
+	/**
+	 * 
+	 * @return
+	 */
 	public String getNegated_mcmt() {
 		return negated_mcmt;
 	}
